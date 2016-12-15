@@ -2,7 +2,7 @@
 Pod::Spec.new do |s|
 
   s.name         = "DLLocalNotifications"
-  s.version      = "0.0.1"
+  s.version      = "0.01"
   s.summary      = "Local Notification Helper for User Notifications framework"
 
  
@@ -11,7 +11,7 @@ Pod::Spec.new do |s|
                    DESC
 
   s.homepage     = "https://github.com/d7laungani/DLLocalNotifications"
-  s.license      = { :type => "MIT" }
+  s.license      = { :type => "MIT", :file => "LICENSE" }
   s.author    = "Devesh Laungani"
   
 
@@ -20,7 +20,7 @@ Pod::Spec.new do |s|
   s.source       = { :git => "https://github.com/d7laungani/DLLocalNotifications.git", :tag => s.version}
   s.ios.deployment_target  = '10.0'
 
-  s.source_files = "Sources/*.swift"
+  s.source_files = "DLLocalNotifications", "DLLocalNotifications/**/*.{h,m,swift}"
  
 
 end
