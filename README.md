@@ -1,26 +1,27 @@
-# DLLocalNotifications
-> Local Notifications made easy
+<p align="center">
+  <img src="Assets/banner.png" width="780" title="DLLocalNotifications">
+</p>
+
 
 [![Swift Version][swift-image]][swift-url]
-[![Build Status][travis-image]][travis-url]
+[![CocoaPods Compatible](https://img.shields.io/cocoapods/v/DLLocalNotifications.svg)][podLink]
+![Platform](https://img.shields.io/badge/platforms-iOS%2010.0+-333333.svg)
 [![License][license-image]][license-url]
-[![CocoaPods Compatible](https://img.shields.io/cocoapods/v/EZSwiftExtensions.svg)](https://img.shields.io/cocoapods/v/LFAlertController.svg)  
-[![Platform](https://img.shields.io/cocoapods/p/LFAlertController.svg?style=flat)](http://cocoapods.org/pods/LFAlertController)
 
-Since IOS 10, apple updated their library for Notifications and sperated Local and push notifications to a new framework: 
-User Notifications .
+Since IOS 10, apple updated their library for Notifications and separated Local and push notifications to a new framework: 
+
+[User Notifications](https://developer.apple.com/reference/usernotifications)
 
 This library makes it easy to setup a local notification and also includes easy configuration for repeating notifications using [ .None, .Minute, .Hourly, .Daily, .Monthly, .Yearly] .
 
 It also includes all the new features, including inserting images into a notification.
 
-![](header.png)
+![](Assets/header.png)
 
 ## Features
 
 - [x] Easily Repeat Notifications
-- [] Category Actions
-- 
+- [ ] Category Actions
 
 ## Requirements
 
@@ -35,8 +36,12 @@ You can use [CocoaPods](http://cocoapods.org/) to install `DLLocalNotifications`
 ```ruby
 platform :ios, '10.0'
 use_frameworks!
-pod 'DLLocalNotifications'
+
+target 'MyApp' do
+	pod 'DLLocalNotifications'
+end
 ```
+Note: your iOS deployment target must be 10.0+
 
 To get the full benefits import `YourLibrary` wherever you import UIKit
 
@@ -54,7 +59,7 @@ import DLLocalNotifications
 ```swift
 import DLLocalNotifications
 
- let firstNotification = DLNotification(identifier: "firstNotification", alertTitle: "Notificaiton Alert", alertBody: "You have successfully created a notification", date: Date(), repeats: .Minute)
+let firstNotification = DLNotification(identifier: "firstNotification", alertTitle: "Notificaiton Alert", alertBody: "You have successfully created a notification", date: Date(), repeats: .Minute)
 
 let scheduler = DLNotificationScheduler()
 scheduler.scheduleNotification(notification: firstNotification)
@@ -66,9 +71,9 @@ We would love for you to contribute to **DLLocalNotifications**, check the ``LIC
 
 ## Meta
 
-Your Name – [@d7laungani](https://twitter.com/d7laungani)
+Devesh Laungani – [@d7laungani](https://twitter.com/d7laungani)
 
-Distributed under the MIT license. See ``LICENSE`` for more information.
+Distributed under the MIT license. See ``LICENSE`` for more information
 
 [https://github.com/d7laungani/](https://github.com/d7laungani/)
 
@@ -76,4 +81,4 @@ Distributed under the MIT license. See ``LICENSE`` for more information.
 [swift-url]: https://swift.org/
 [license-image]: https://img.shields.io/badge/License-MIT-blue.svg
 [license-url]: LICENSE
-
+[podLink]:https://cocoapods.org/pods/DLLocalNotifications
