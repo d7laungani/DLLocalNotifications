@@ -16,7 +16,6 @@ This library makes it easy to setup a local notification and also includes easy 
 
 It also includes all the new features, including inserting images into a notification.
 
-![](Assets/header.png)
 
 ## Features
 
