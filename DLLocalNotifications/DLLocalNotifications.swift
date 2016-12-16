@@ -80,6 +80,8 @@ public class DLNotificationScheduler{
             if !(notification.attachments == nil){ content.attachments = notification.attachments! }
             
             if !(notification.launchImageName == nil){ content.launchImageName = notification.launchImageName! }
+            
+             if !(notification.category == nil){ content.categoryIdentifier = notification.category! }
 
             notification.localNotificationRequest = UNNotificationRequest(identifier: notification.identifier!, content: content, trigger: trigger)
             
@@ -169,6 +171,7 @@ public class DLNotification {
     
     var launchImageName: String?
     
+    var category:String?
     
     init (identifier:String, alertTitle:String, alertBody: String, date: Date?, repeats: Repeats ) {
         
