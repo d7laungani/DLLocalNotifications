@@ -5,6 +5,6 @@ branches:
  - master
 
 xcode_project: DLLocalNotifications.xcodeproj
-xcode_scheme: DLLocalNotifications
+xcode_scheme: DLLocalNotificationsTests
 osx_image: xcode8.2
 xcode_sdk: iphonesimulator10.0
