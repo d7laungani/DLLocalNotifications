@@ -1,0 +1,10 @@
+language: objective-c
+
+branches:
+ only:
+ - master
+
+xcode_project: DLLocalNotifications.xcodeproj
+xcode_scheme: DLLocalNotifications
+osx_image: xcode8.2
+xcode_sdk: iphonesimulator10.0
