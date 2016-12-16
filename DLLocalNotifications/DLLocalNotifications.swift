@@ -77,6 +77,10 @@ public class DLNotificationScheduler{
             
             content.sound = (notification.soundName == nil) ? UNNotificationSound.default() : UNNotificationSound.init(named: notification.soundName!)
             
+            if !(notification.attachments == nil){ content.attachments = notification.attachments! }
+            
+            if !(notification.launchImageName == nil){ content.launchImageName = notification.launchImageName! }
+
             notification.localNotificationRequest = UNNotificationRequest(identifier: notification.identifier!, content: content, trigger: trigger)
             
             let center = UNUserNotificationCenter.current()
@@ -106,7 +110,7 @@ public class DLNotificationScheduler{
         // Create multiple Notifications
         
         self.scheduleNotification(notification: notification)
-        var intervalDifference = Int( toDate.timeIntervalSince(fromDate) / interval )
+        let intervalDifference = Int( toDate.timeIntervalSince(fromDate) / interval )
         
         var nextDate = fromDate
         
@@ -118,7 +122,7 @@ public class DLNotificationScheduler{
             
             // create notification
             
-            var identifier = identifier + String(i + 1)
+            let identifier = identifier + String(i + 1)
             
             let notification = DLNotification(identifier: identifier, alertTitle: alertTitle, alertBody: alertBody, date: nextDate, repeats: .None)
             
@@ -161,9 +165,9 @@ public class DLNotification {
     
     var identifier:String?
     
-
+    var attachments:[UNNotificationAttachment]?
     
-    
+    var launchImageName: String?
     
     
     init (identifier:String, alertTitle:String, alertBody: String, date: Date?, repeats: Repeats ) {
