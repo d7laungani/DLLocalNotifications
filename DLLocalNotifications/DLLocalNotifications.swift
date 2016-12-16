@@ -12,7 +12,7 @@ import UserNotifications
 
 public class DLNotificationScheduler{
     
-
+    
     func cancelAlllNotifications () {
         
         
@@ -26,37 +26,39 @@ public class DLNotificationScheduler{
     }
     
     
-    func scheduleNotification ( notification: DLNotification) -> String? {
+    
+   private func convertToNotificationDateComponent (notification: DLNotification, repeatInterval: Repeats   ) -> DateComponents{
         
-        func convertToNotificationDateComponent (repeatInterval: Repeats   ) -> DateComponents{
+        
+        var newComponents = Calendar.current.dateComponents([.year,.month,.day,.hour,.minute,.second,], from: notification.fireDate!)
+        
+        if repeatInterval != .None {
             
-            
-            var newComponents = Calendar.current.dateComponents([.year,.month,.day,.hour,.minute,.second,], from: notification.fireDate!)
-            
-            if repeatInterval != .None {
-                
-                switch repeatInterval {
-                case .Minute:
-                    newComponents = Calendar.current.dateComponents([ .second], from: notification.fireDate!)
-                case .Hourly:
-                    newComponents = Calendar.current.dateComponents([ .minute], from: notification.fireDate!)
-                case .Daily:
-                    newComponents = Calendar.current.dateComponents([.hour, .minute], from: notification.fireDate!)
-                case .Weekly:
-                    newComponents = Calendar.current.dateComponents([.hour, .minute, .weekday], from: notification.fireDate!)
-                case .Monthly:
-                    newComponents = Calendar.current.dateComponents([.hour, .minute, .day], from: notification.fireDate!)
-                case .Yearly:
-                    newComponents = Calendar.current.dateComponents([.hour, .minute, .day, .month], from: notification.fireDate!)
-                default:
-                    break
-                }
+            switch repeatInterval {
+            case .Minute:
+                newComponents = Calendar.current.dateComponents([ .second], from: notification.fireDate!)
+            case .Hourly:
+                newComponents = Calendar.current.dateComponents([ .minute], from: notification.fireDate!)
+            case .Daily:
+                newComponents = Calendar.current.dateComponents([.hour, .minute], from: notification.fireDate!)
+            case .Weekly:
+                newComponents = Calendar.current.dateComponents([.hour, .minute, .weekday], from: notification.fireDate!)
+            case .Monthly:
+                newComponents = Calendar.current.dateComponents([.hour, .minute, .day], from: notification.fireDate!)
+            case .Yearly:
+                newComponents = Calendar.current.dateComponents([.hour, .minute, .day, .month], from: notification.fireDate!)
+            default:
+                break
             }
-            
-            
-            
-            return newComponents
         }
+        
+        
+        
+        return newComponents
+    }
+    
+    
+    func scheduleNotification ( notification: DLNotification) -> String? {
         
         
         if notification.scheduled {
@@ -65,8 +67,7 @@ public class DLNotificationScheduler{
             
             
             
-            
-            let trigger = UNCalendarNotificationTrigger(dateMatching: convertToNotificationDateComponent(repeatInterval: notification.repeatInterval), repeats: notification.repeats)
+            let trigger = UNCalendarNotificationTrigger(dateMatching: convertToNotificationDateComponent(notification: notification, repeatInterval: notification.repeatInterval), repeats: notification.repeats)
             
             let content = UNMutableNotificationContent()
             
@@ -93,7 +94,39 @@ public class DLNotificationScheduler{
         
     }
     
+    // You have to manually keep in mind ios 64 notification limit
     
+    func repeatsFromToDate (identifier:String, alertTitle:String, alertBody: String, fromDate: Date, toDate: Date, interval: Double) {
+        
+        
+        
+        
+        let notification = DLNotification(identifier: identifier, alertTitle: alertTitle, alertBody: alertBody, date: fromDate, repeats: .None)
+        
+        // Create multiple Notifications
+        
+        self.scheduleNotification(notification: notification)
+        var intervalDifference = Int( toDate.timeIntervalSince(fromDate) / interval )
+        
+        var nextDate = fromDate
+        
+        for i in 0..<intervalDifference {
+            
+            // Next notification Date
+            
+            nextDate = nextDate.addingTimeInterval(interval)
+            
+            // create notification
+            
+            var identifier = identifier + String(i + 1)
+            
+            let notification = DLNotification(identifier: identifier, alertTitle: alertTitle, alertBody: alertBody, date: nextDate, repeats: .None)
+            
+            self.scheduleNotification(notification: notification)
+        }
+        
+        
+    }
     
     
 }
@@ -128,6 +161,7 @@ public class DLNotification {
     
     var identifier:String?
     
+
     
     
     
@@ -166,7 +200,6 @@ public class DLNotification {
         }
         
     }
-    
     
     
     
