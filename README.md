@@ -98,20 +98,11 @@ scheduler.repeatsFromToDate(identifier: "First Notification", alertTitle: "Multi
 
 Note: You have to keep into consideration the apple 64 notification limit. This function does not take that into consideration.
 
-### Mofiying elements of the notification
+### Modifying elements of the notification
 
 You can modify elements of the notification before categorizing. Publically accessible variables include:
 
-repeatInterval
-alertBody
-alertTitle
-soundName
-fireDate
-attachments
-launchImageName
-category
-
-For instance if you want to add a launch image name you can do that by:
+repeatInterval, alertBody, alertTitle, soundName, fireDate, attachments, launchImageName, category
 
 ```swift
 
