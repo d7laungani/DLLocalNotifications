@@ -43,13 +43,6 @@ end
 ```
 Note: your iOS deployment target must be 10.0+
 
-To get the full benefits import `YourLibrary` wherever you import UIKit
-
-``` swift
-import UIKit
-import DLLocalNotifications
-```
-
 #### Manually
 1. Download and drop ```DLLocalNotifications.swift``` in your project.  
 2. Congratulations!  
@@ -100,7 +93,7 @@ Note: You have to keep into consideration the apple 64 notification limit. This 
 
 ### Modifying elements of the notification
 
-You can modify elements of the notification before categorizing. Publically accessible variables include:
+You can modify elements of the notification before scheduling. Publically accessible variables include:
 
 repeatInterval, alertBody, alertTitle, soundName, fireDate, attachments, launchImageName, category
 
