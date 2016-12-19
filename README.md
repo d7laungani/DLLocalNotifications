@@ -21,6 +21,7 @@ It also includes all the new features, including inserting attachments and chang
 ## Features
 
 - [x] Easily Repeat Notifications
+- [x] Location Based Notifications
 - [ ] Category Actions
 
 ## Requirements
@@ -109,6 +110,22 @@ firstNotification.launchImageName = "Hello.png"
 
 let scheduler = DLNotificationScheduler()
 scheduler.scheduleNotification(notification: firstNotification)
+```
+### Location Based Notification
+
+The notification is triggered when a user enters a geo-fenced area.
+
+```swift
+
+let center = CLLocationCoordinate2D(latitude: 37.335400, longitude: -122.009201)
+let region = CLCircularRegion(center: center, radius: 2000.0, identifier: "Headquarters")
+region.notifyOnEntry = true
+region.notifyOnExit = false
+
+let locationtNotification = DLNotification(identifier: "LocationNotification", alertTitle: "Notificaiton Alert", alertBody: "You have reached work", region: region )
+
+let scheduler = DLNotificationScheduler()
+scheduler.scheduleNotification(notification: locationNotification)
 ```
 
 ## Contribute
