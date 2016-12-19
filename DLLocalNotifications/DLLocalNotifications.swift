@@ -8,6 +8,7 @@
 
 import Foundation
 import UserNotifications
+import MapKit
 
 
 public class DLNotificationScheduler{
@@ -27,7 +28,7 @@ public class DLNotificationScheduler{
     
     
     
-   private func convertToNotificationDateComponent (notification: DLNotification, repeatInterval: Repeats   ) -> DateComponents{
+    private func convertToNotificationDateComponent (notification: DLNotification, repeatInterval: Repeats   ) -> DateComponents{
         
         
         var newComponents = Calendar.current.dateComponents([.year,.month,.day,.hour,.minute,.second,], from: notification.fireDate!)
@@ -63,12 +64,17 @@ public class DLNotificationScheduler{
         
         if notification.scheduled {
             return nil
-        } else {
+        }
+        else {
+            var trigger: UNNotificationTrigger
             
-            
-            
-            let trigger = UNCalendarNotificationTrigger(dateMatching: convertToNotificationDateComponent(notification: notification, repeatInterval: notification.repeatInterval), repeats: notification.repeats)
-            
+            if (notification.region != nil) {
+                trigger = UNLocationNotificationTrigger(region: notification.region!, repeats: false)
+                
+            } else{
+                
+                trigger = UNCalendarNotificationTrigger(dateMatching: convertToNotificationDateComponent(notification: notification, repeatInterval: notification.repeatInterval), repeats: notification.repeats)
+            }
             let content = UNMutableNotificationContent()
             
             content.title = notification.alertTitle!
@@ -81,8 +87,8 @@ public class DLNotificationScheduler{
             
             if !(notification.launchImageName == nil){ content.launchImageName = notification.launchImageName! }
             
-             if !(notification.category == nil){ content.categoryIdentifier = notification.category! }
-
+            if !(notification.category == nil){ content.categoryIdentifier = notification.category! }
+            
             notification.localNotificationRequest = UNNotificationRequest(identifier: notification.identifier!, content: content, trigger: trigger)
             
             let center = UNUserNotificationCenter.current()
@@ -161,7 +167,7 @@ public class DLNotification {
     
     var fireDate: Date?
     
-    var repeats:Bool
+    var repeats:Bool = false
     
     var scheduled: Bool = false
     
@@ -172,6 +178,8 @@ public class DLNotification {
     var launchImageName: String?
     
     var category:String?
+    
+    var region:CLRegion?
     
     init (identifier:String, alertTitle:String, alertBody: String, date: Date?, repeats: Repeats ) {
         
@@ -208,6 +216,20 @@ public class DLNotification {
         
     }
     
+    // Region based notification
+    // Default notifyOnExit is false and notifyOnEntry is true
+    
+    init (identifier:String, alertTitle:String, alertBody: String, region: CLRegion? ) {
+        
+        self.alertBody = alertBody
+        self.alertTitle = alertTitle
+        self.identifier = identifier
+        region?.notifyOnExit = false
+        region?.notifyOnEntry = true
+        self.region = region
+        
+        
+    }
     
     
 }
