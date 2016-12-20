@@ -17,6 +17,18 @@ This library makes it easy to setup a local notification and also includes easy 
 
 It also includes all the new features, including inserting attachments and changing the launch image of a notification.
 
+1. [Features](#features)
+2. [Requirements](#requirements)
+3. [Installation](#installation)
+    - [CocoaPods](#cocoapods)
+    - [Manually](#manually)
+4. [Usage](#usage)
+    - [Single Fire Notification](#single-fire-notification)
+    - [Repeating Notification starting at a Date](#repeating-notification-starting-at-a-date)
+    - [Notification that repeats from one Date to another with a time interval period](#notification-that-repeats-from-one-date-to-another-with-a-time-interval-period)
+    - [Modifying elements of the notification](#modifying-elements-of-the-notification)
+    - [Location Based Notification](#location-based-notification)
+5. [Contribute](#contribute)
 
 ## Features
 
@@ -47,7 +59,7 @@ Note: your iOS deployment target must be 10.0+
 #### Manually
 1. Download and drop ```DLLocalNotifications.swift``` in your project.  
 2. Congratulations!  
-
+Notification that repeats from one Date to another with a time interval period
 ## Usage 
 
 ### Single fire notification
