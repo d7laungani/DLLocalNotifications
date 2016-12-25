@@ -141,6 +141,24 @@ public class DLNotificationScheduler{
     }
     
     
+    func scheduleCategories(categories:[DLCategory]) {
+        
+        var categories1 = Set<UNNotificationCategory>()
+        
+        for x in categories {
+            
+            categories1.insert(x.categoryInstance!)
+        }
+        UNUserNotificationCenter.current().setNotificationCategories(categories1)
+        
+        
+        
+    }
+        
+        
+    
+    
+    
 }
 
 // Repeating Interval Times
@@ -148,6 +166,37 @@ public class DLNotificationScheduler{
 enum Repeats: String {
     case None,Minute, Hourly , Daily, Weekly , Monthly, Yearly
 }
+
+
+// A wrapper class for creating a Category
+
+public class DLCategory  {
+    
+    private var actions:[UNNotificationAction]?
+    internal var categoryInstance:UNNotificationCategory?
+    var identifier:String
+    
+    
+    init (categoryIdentifier:String) {
+        
+        identifier = categoryIdentifier
+        
+    }
+    
+    func addActionButton(identifier:String?, title:String?) {
+        
+        let action = UNNotificationAction(identifier: identifier!, title: title!, options: [])
+        actions?.append(action)
+        categoryInstance = UNNotificationCategory(identifier: self.identifier, actions: self.actions!, intentIdentifiers: [], options: [])
+        
+    }
+    
+    
+    
+    
+    
+}
+
 
 
 
