@@ -28,13 +28,15 @@ It also includes all the new features, including inserting attachments and chang
     - [Notification that repeats from one Date to another with a time interval period](#notification-that-repeats-from-one-date-to-another-with-a-time-interval-period)
     - [Modifying elements of the notification](#modifying-elements-of-the-notification)
     - [Location Based Notification](#location-based-notification)
+    - [Action Buttons](#adding-action-buttons-to-a-notification)
 5. [Contribute](#contribute)
 
 ## Features
 
 - [x] Easily Repeat Notifications
 - [x] Location Based Notifications
-- [ ] Category Actions
+- [x] Category Action buttons
+- [ ] Queue to enforce 64 notification limit
 
 ## Requirements
 
@@ -94,8 +96,7 @@ This is useful to setup notifications to repeat every specific time interval for
 ```swift
 
 let scheduler = DLNotificationScheduler()
-scheduler.cancelAlllNotifications()
- 
+
 // This notification repeats every 15 seconds from a time period starting from 15 seconds from the current time till 5 minutes from the current time
 
 scheduler.repeatsFromToDate(identifier: "First Notification", alertTitle: "Multiple Notifcations", alertBody: "Progress", fromDate: Date().addingTimeInterval(15), toDate: Date().addingTimeInterval(300) , interval: 15 )
@@ -139,6 +140,23 @@ let locationtNotification = DLNotification(identifier: "LocationNotification", a
 let scheduler = DLNotificationScheduler()
 scheduler.scheduleNotification(notification: locationNotification)
 ```
+
+### Adding action buttons to a notification
+
+```swift
+
+ let scheduler = DLNotificationScheduler()
+        
+ let standingCategory = DLCategory(categoryIdentifier: "standingReminder")
+        
+ standingCategory.addActionButton(identifier: "willStand", title: "Ok, got it")
+ standingCategory.addActionButton(identifier: "willNotStand", title: "Cannot")
+        
+ scheduler.scheduleCategories(categories: [standingCategory])
+
+```
+
+
 
 ## Contribute
 
