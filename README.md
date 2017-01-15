@@ -61,7 +61,7 @@ Note: your iOS deployment target must be 10.0+
 #### Manually
 1. Download and drop ```DLLocalNotifications.swift``` in your project.  
 2. Congratulations!  
-Notification that repeats from one Date to another with a time interval period
+
 ## Usage 
 
 ### Single fire notification
