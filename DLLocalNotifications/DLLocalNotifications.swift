@@ -108,12 +108,12 @@ public class DLNotificationScheduler{
     
     // You have to manually keep in mind ios 64 notification limit
     
-    func repeatsFromToDate (identifier:String, alertTitle:String, alertBody: String, fromDate: Date, toDate: Date, interval: Double) {
+    func repeatsFromToDate (identifier:String, alertTitle:String, alertBody: String, fromDate: Date, toDate: Date, interval: Double, repeats: Repeats) {
         
         
         
         
-        let notification = DLNotification(identifier: identifier, alertTitle: alertTitle, alertBody: alertBody, date: fromDate, repeats: .None)
+        let notification = DLNotification(identifier: identifier, alertTitle: alertTitle, alertBody: alertBody, date: fromDate, repeats: repeats)
         
         // Create multiple Notifications
         
@@ -132,7 +132,7 @@ public class DLNotificationScheduler{
             
             let identifier = identifier + String(i + 1)
             
-            let notification = DLNotification(identifier: identifier, alertTitle: alertTitle, alertBody: alertBody, date: nextDate, repeats: .None)
+            let notification = DLNotification(identifier: identifier, alertTitle: alertTitle, alertBody: alertBody, date: nextDate, repeats: repeats)
             
             self.scheduleNotification(notification: notification)
         }
