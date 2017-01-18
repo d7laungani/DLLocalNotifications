@@ -66,6 +66,8 @@ Note: your iOS deployment target must be 10.0+
 
 ### Single fire notification
 
+Notification that repeats from one Date to another with a time interval period
+
 ```swift
 
 // The date you would like the notification to fire at
@@ -99,7 +101,7 @@ let scheduler = DLNotificationScheduler()
 
 // This notification repeats every 15 seconds from a time period starting from 15 seconds from the current time till 5 minutes from the current time
 
-scheduler.repeatsFromToDate(identifier: "First Notification", alertTitle: "Multiple Notifcations", alertBody: "Progress", fromDate: Date().addingTimeInterval(15), toDate: Date().addingTimeInterval(300) , interval: 15 )
+scheduler.repeatsFromToDate(identifier: "First Notification", alertTitle: "Multiple Notifcations", alertBody: "Progress", fromDate: Date().addingTimeInterval(15), toDate: Date().addingTimeInterval(300) , interval: 15, repeats: .None )
 
 ```
 
