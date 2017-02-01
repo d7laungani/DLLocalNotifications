@@ -137,7 +137,7 @@ let region = CLCircularRegion(center: center, radius: 2000.0, identifier: "Headq
 region.notifyOnEntry = true
 region.notifyOnExit = false
 
-let locationtNotification = DLNotification(identifier: "LocationNotification", alertTitle: "Notificaiton Alert", alertBody: "You have reached work", region: region )
+let locationNotification = DLNotification(identifier: "LocationNotification", alertTitle: "Notificaiton Alert", alertBody: "You have reached work", region: region )
 
 let scheduler = DLNotificationScheduler()
 scheduler.scheduleNotification(notification: locationNotification)
