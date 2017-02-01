@@ -14,14 +14,19 @@ import MapKit
 public class DLNotificationScheduler{
     
     
-    func cancelAlllNotifications () {
+    public init () {
+        
+        
+    }
+    
+    public func cancelAlllNotifications () {
         
         
         UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
         
     }
     
-    func cancelNotification (notification: DLNotification) {
+    public func cancelNotification (notification: DLNotification) {
         
         UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [(notification.localNotificationRequest?.identifier)!])
     }
@@ -59,7 +64,7 @@ public class DLNotificationScheduler{
     }
     
     
-    func scheduleNotification ( notification: DLNotification) -> String? {
+    public func scheduleNotification ( notification: DLNotification) -> String? {
         
         
         if notification.scheduled {
@@ -108,7 +113,7 @@ public class DLNotificationScheduler{
     
     // You have to manually keep in mind ios 64 notification limit
     
-    func repeatsFromToDate (identifier:String, alertTitle:String, alertBody: String, fromDate: Date, toDate: Date, interval: Double, repeats: Repeats) {
+    public func repeatsFromToDate (identifier:String, alertTitle:String, alertBody: String, fromDate: Date, toDate: Date, interval: Double, repeats: Repeats) {
         
         
         
@@ -141,7 +146,7 @@ public class DLNotificationScheduler{
     }
     
     
-    func scheduleCategories(categories:[DLCategory]) {
+    public func scheduleCategories(categories:[DLCategory]) {
         
         var categories1 = Set<UNNotificationCategory>()
         
@@ -154,8 +159,8 @@ public class DLNotificationScheduler{
         
         
     }
-        
-        
+    
+    
     
     
     
@@ -163,7 +168,7 @@ public class DLNotificationScheduler{
 
 // Repeating Interval Times
 
-enum Repeats: String {
+public enum Repeats: String {
     case None,Minute, Hourly , Daily, Weekly , Monthly, Yearly
 }
 
@@ -177,13 +182,13 @@ public class DLCategory  {
     var identifier:String
     
     
-    init (categoryIdentifier:String) {
+    public init (categoryIdentifier:String) {
         
         identifier = categoryIdentifier
         
     }
     
-    func addActionButton(identifier:String?, title:String?) {
+    public func addActionButton(identifier:String?, title:String?) {
         
         let action = UNNotificationAction(identifier: identifier!, title: title!, options: [])
         actions?.append(action)
@@ -230,7 +235,7 @@ public class DLNotification {
     
     var region:CLRegion?
     
-    init (identifier:String, alertTitle:String, alertBody: String, date: Date?, repeats: Repeats ) {
+    public init (identifier:String, alertTitle:String, alertBody: String, date: Date?, repeats: Repeats ) {
         
         self.alertBody = alertBody
         self.alertTitle = alertTitle
@@ -248,7 +253,7 @@ public class DLNotification {
         
     }
     
-    init (identifier:String, alertTitle:String, alertBody: String, date: Date?, repeats: Repeats, soundName: String ) {
+    public init (identifier:String, alertTitle:String, alertBody: String, date: Date?, repeats: Repeats, soundName: String ) {
         
         self.alertBody = alertBody
         self.alertTitle = alertTitle
@@ -268,7 +273,7 @@ public class DLNotification {
     // Region based notification
     // Default notifyOnExit is false and notifyOnEntry is true
     
-    init (identifier:String, alertTitle:String, alertBody: String, region: CLRegion? ) {
+    public init (identifier:String, alertTitle:String, alertBody: String, region: CLRegion? ) {
         
         self.alertBody = alertBody
         self.alertTitle = alertTitle
