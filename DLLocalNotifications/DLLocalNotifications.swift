@@ -185,6 +185,7 @@ public class DLCategory  {
     public init (categoryIdentifier:String) {
         
         identifier = categoryIdentifier
+        actions = [UNNotificationAction] ()
         
     }
     
@@ -231,7 +232,7 @@ public class DLNotification {
     
     var launchImageName: String?
     
-    var category:String?
+    public var category:String?
     
     var region:CLRegion?
     
