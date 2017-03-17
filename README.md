@@ -157,7 +157,11 @@ scheduler.scheduleNotification(notification: locationNotification)
  scheduler.scheduleCategories(categories: [standingCategory])
 
 ```
+Don't forget to the set the notificaiton category afterwards using
 
+```swift
+notification.category = "standingReminder"
+```
 
 
 ## Contribute
