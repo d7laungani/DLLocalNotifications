@@ -31,6 +31,29 @@ public class DLNotificationScheduler{
         UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [(notification.localNotificationRequest?.identifier)!])
     }
     
+    func printAllNotifications () {
+        
+        UNUserNotificationCenter.current().getPendingNotificationRequests(completionHandler: { (requests) in
+            
+            for request  in  requests {
+                if let request1 =  request.trigger as?  UNTimeIntervalNotificationTrigger {
+                    print(request1.nextTriggerDate().debugDescription)
+                }
+                if let request2 =  request.trigger as?  UNCalendarNotificationTrigger {
+                    print(request2.nextTriggerDate().debugDescription)
+                }
+                if let request3 = request.trigger as? UNLocationNotificationTrigger {
+                    
+                    print(request3.region.debugDescription)
+                }
+                
+                
+                
+                
+            }
+        })
+    }
+    
     
     
     private func convertToNotificationDateComponent (notification: DLNotification, repeatInterval: Repeats   ) -> DateComponents{
@@ -73,12 +96,23 @@ public class DLNotificationScheduler{
         else {
             var trigger: UNNotificationTrigger
             
+            
+            
             if (notification.region != nil) {
                 trigger = UNLocationNotificationTrigger(region: notification.region!, repeats: false)
+                if (notification.repeatInterval == .Hourly) {
+                    trigger = UNTimeIntervalNotificationTrigger.init(timeInterval: (TimeInterval(3600)), repeats: false)
+                    
+                }
                 
             } else{
                 
                 trigger = UNCalendarNotificationTrigger(dateMatching: convertToNotificationDateComponent(notification: notification, repeatInterval: notification.repeatInterval), repeats: notification.repeats)
+                if (notification.repeatInterval == .Hourly) {
+                    trigger = UNTimeIntervalNotificationTrigger.init(timeInterval: (TimeInterval(3600)), repeats: false)
+                    
+                }
+                
             }
             let content = UNMutableNotificationContent()
             
