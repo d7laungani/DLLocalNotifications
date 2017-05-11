@@ -175,6 +175,7 @@ Devesh Laungani – [@d7laungani](https://twitter.com/d7laungani)
 Distributed under the MIT license. See ``LICENSE`` for more information
 
 [https://github.com/d7laungani/](https://github.com/d7laungani/)
+[Hire Me](http://deveshlaungani.com/)
 
 [swift-image]:https://img.shields.io/badge/swift-3.0-orange.svg
 [swift-url]: https://swift.org/
