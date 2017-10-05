@@ -3,6 +3,7 @@
 //  DLLocalNotifications
 //
 //  Created by Devesh Laungani on 12/14/16.
+//  Refactored and migrated to Swift 3 syntax by Jan Thielemann on 05/13/17
 //  Copyright © 2016 Devesh Laungani. All rights reserved.
 //
 
@@ -10,31 +11,20 @@ import Foundation
 import UserNotifications
 import MapKit
 
-
-public class DLNotificationScheduler{
+public class DLNotificationScheduler {
     
+    private init() {}
     
-    public init () {
-        
-        
-    }
-    
-    public func cancelAlllNotifications () {
-        
-        
+    public static func cancelAlllNotifications () {
         UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
-        
     }
-    
-    public func cancelNotification (notification: DLNotification) {
-        
+
+    public static func cancelNotification(_ notification: DLNotification) {
         UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [(notification.localNotificationRequest?.identifier)!])
     }
     
-    func printAllNotifications () {
-        
+    public static func printAllNotifications () {
         UNUserNotificationCenter.current().getPendingNotificationRequests(completionHandler: { (requests) in
-            
             for request  in  requests {
                 if let request1 =  request.trigger as?  UNTimeIntervalNotificationTrigger {
                     print(request1.nextTriggerDate().debugDescription)
@@ -46,87 +36,69 @@ public class DLNotificationScheduler{
                     
                     print(request3.region.debugDescription)
                 }
-                
-                
-                
-                
             }
         })
     }
-    
-    
-    
-    private func convertToNotificationDateComponent (notification: DLNotification, repeatInterval: Repeats   ) -> DateComponents{
-        
-        
+
+    private static func convertToNotificationDateComponent(_ notification: DLNotification, repeatInterval: RepeatingInterval   ) -> DateComponents{
         var newComponents = Calendar.current.dateComponents([.year,.month,.day,.hour,.minute,.second,], from: notification.fireDate!)
-        
-        if repeatInterval != .None {
-            
+        if repeatInterval != .none {
             switch repeatInterval {
-            case .Minute:
+            case .minute:
                 newComponents = Calendar.current.dateComponents([ .second], from: notification.fireDate!)
-            case .Hourly:
+            case .hour:
                 newComponents = Calendar.current.dateComponents([ .minute], from: notification.fireDate!)
-            case .Daily:
+            case .day:
                 newComponents = Calendar.current.dateComponents([.hour, .minute], from: notification.fireDate!)
-            case .Weekly:
+            case .week:
                 newComponents = Calendar.current.dateComponents([.hour, .minute, .weekday], from: notification.fireDate!)
-            case .Monthly:
+            case .month:
                 newComponents = Calendar.current.dateComponents([.hour, .minute, .day], from: notification.fireDate!)
-            case .Yearly:
+            case .year:
                 newComponents = Calendar.current.dateComponents([.hour, .minute, .day, .month], from: notification.fireDate!)
             default:
                 break
             }
         }
         
-        
-        
         return newComponents
     }
     
-    
-    public func scheduleNotification ( notification: DLNotification) -> String? {
-        
-        
+    public static func scheduleNotification(_ notification: DLNotification) -> String? {
         if notification.scheduled {
             return nil
-        }
-        else {
+        } else {
             var trigger: UNNotificationTrigger
-            
-            
             
             if (notification.region != nil) {
                 trigger = UNLocationNotificationTrigger(region: notification.region!, repeats: false)
-                if (notification.repeatInterval == .Hourly) {
+                if (notification.repeatInterval == .hour) {
                     trigger = UNTimeIntervalNotificationTrigger.init(timeInterval: (TimeInterval(3600)), repeats: false)
                     
                 }
-                
-            } else{
-                
-                trigger = UNCalendarNotificationTrigger(dateMatching: convertToNotificationDateComponent(notification: notification, repeatInterval: notification.repeatInterval), repeats: notification.repeats)
-                if (notification.repeatInterval == .Hourly) {
+            } else {
+                trigger = UNCalendarNotificationTrigger(dateMatching: convertToNotificationDateComponent(notification, repeatInterval: notification.repeatInterval), repeats: notification.repeats)
+                if (notification.repeatInterval == .hour) {
                     trigger = UNTimeIntervalNotificationTrigger.init(timeInterval: (TimeInterval(3600)), repeats: false)
-                    
                 }
-                
             }
+            
             let content = UNMutableNotificationContent()
-            
             content.title = notification.alertTitle!
-            
             content.body = notification.alertBody!
-            
             content.sound = (notification.soundName == nil) ? UNNotificationSound.default() : UNNotificationSound.init(named: notification.soundName!)
             
-            if !(notification.attachments == nil){ content.attachments = notification.attachments! }
+            if !(notification.attachments == nil){
+                content.attachments = notification.attachments!
+            }
             
-            if !(notification.launchImageName == nil){ content.launchImageName = notification.launchImageName! }
+            if !(notification.launchImageName == nil){
+                content.launchImageName = notification.launchImageName!
+            }
             
-            if !(notification.category == nil){ content.categoryIdentifier = notification.category! }
+            if !(notification.category == nil){
+                content.categoryIdentifier = notification.category!
+            }
             
             notification.localNotificationRequest = UNNotificationRequest(identifier: notification.identifier!, content: content, trigger: trigger)
             
@@ -134,108 +106,78 @@ public class DLNotificationScheduler{
             center.add(notification.localNotificationRequest!, withCompletionHandler: {(error) in print ("completed") } )
             
             notification.scheduled = true
-            
-            
-            
         }
         
         return notification.identifier
-        
-        
-        
     }
     
-    // You have to manually keep in mind ios 64 notification limit
-    
-    public func repeatsFromToDate (identifier:String, alertTitle:String, alertBody: String, fromDate: Date, toDate: Date, interval: Double, repeats: Repeats, category:String = " ") {
+    public static func repeatsFromToDate(identifier:String, alertTitle:String, alertBody: String, fromDate: Date, toDate: Date, interval: Double, repeats: RepeatingInterval, category:String = " ") -> [String] {
         
+        var identifiers = [String]()
         
-        
-        
-        let notification = DLNotification(identifier: identifier, alertTitle: alertTitle, alertBody: alertBody, date: fromDate, repeats: repeats)
+        let notification = DLNotification(identifier: identifier + String(0), alertTitle: alertTitle, alertBody: alertBody, date: fromDate, repeats: repeats)
         notification.category = category
         
-        // Create multiple Notifications
+        if let identifier = scheduleNotification(notification) {
+            identifiers.append(identifier)
+        }
         
-        self.scheduleNotification(notification: notification)
-        let intervalDifference = Int( toDate.timeIntervalSince(fromDate) / interval )
+        let intervalDifference = Int(toDate.timeIntervalSince(fromDate) / interval)
         
         var nextDate = fromDate
         
-        for i in 0..<intervalDifference {
-            
-            // Next notification Date
-            
+        for i in 1..<intervalDifference {
             nextDate = nextDate.addingTimeInterval(interval)
             
-            // create notification
-            
-            let identifier = identifier + String(i + 1)
-            
-            let notification = DLNotification(identifier: identifier, alertTitle: alertTitle, alertBody: alertBody, date: nextDate, repeats: repeats)
+            let notification = DLNotification(identifier: identifier + String(i), alertTitle: alertTitle, alertBody: alertBody, date: nextDate, repeats: repeats)
             notification.category = category
-            self.scheduleNotification(notification: notification)
-        }
-        
-        
-    }
-    
-    
-    public func scheduleCategories(categories:[DLCategory]) {
-        
-        var categories1 = Set<UNNotificationCategory>()
-        
-        for x in categories {
             
-            categories1.insert(x.categoryInstance!)
+            if let identifier = scheduleNotification(notification) {
+                identifiers.append(identifier)
+            }
         }
-        UNUserNotificationCenter.current().setNotificationCategories(categories1)
         
-        
-        
+        return identifiers
     }
     
     
-    
-    
-    
+    public static func scheduleCategories(_ categories:[DLCategory]) {
+        var notificationCategories = Set<UNNotificationCategory>()
+        
+        for categorie in categories {
+            guard let categoryInstance = categorie.categoryInstance else { continue }
+            notificationCategories.insert(categoryInstance)
+        }
+        
+        UNUserNotificationCenter.current().setNotificationCategories(notificationCategories)
+    }
 }
 
 // Repeating Interval Times
-
-public enum Repeats: String {
-    case None,Minute, Hourly , Daily, Weekly , Monthly, Yearly
+public enum RepeatingInterval: String {
+    case none, minute, hour, day, week, month, year
 }
 
 
 // A wrapper class for creating a Category
-
 public class DLCategory  {
     
-    private var actions:[UNNotificationAction]?
-    internal var categoryInstance:UNNotificationCategory?
-    var identifier:String
+    private var actions: [UNNotificationAction]?
     
+    internal var categoryInstance: UNNotificationCategory?
     
-    public init (categoryIdentifier:String) {
-        
+    var identifier: String
+    
+    public init(categoryIdentifier:String) {
         identifier = categoryIdentifier
-        actions = [UNNotificationAction] ()
-        
+        actions = [UNNotificationAction]()
     }
     
     public func addActionButton(identifier:String?, title:String?) {
-        
         let action = UNNotificationAction(identifier: identifier!, title: title!, options: [])
         actions?.append(action)
         categoryInstance = UNNotificationCategory(identifier: self.identifier, actions: self.actions!, intentIdentifiers: [], options: [])
-        
     }
-    
-    
-    
-    
-    
 }
 
 
@@ -247,7 +189,7 @@ public class DLNotification {
     
     internal var localNotificationRequest: UNNotificationRequest?
     
-    var repeatInterval: Repeats = .None
+    var repeatInterval: RepeatingInterval = .none
     
     var alertBody: String?
     
@@ -271,26 +213,20 @@ public class DLNotification {
     
     var region:CLRegion?
     
-    public init (identifier:String, alertTitle:String, alertBody: String, date: Date?, repeats: Repeats ) {
-        
+    public init(identifier:String, alertTitle:String, alertBody: String, date: Date?, repeats: RepeatingInterval ) {
         self.alertBody = alertBody
         self.alertTitle = alertTitle
         self.fireDate = date
         self.repeatInterval = repeats
         self.identifier = identifier
-        if (repeats == .None) {
+        if (repeats == .none) {
             self.repeats = false
         } else {
             self.repeats = true
         }
-        
-        
-        
-        
     }
     
-    public init (identifier:String, alertTitle:String, alertBody: String, date: Date?, repeats: Repeats, soundName: String ) {
-        
+    public init(identifier:String, alertTitle:String, alertBody: String, date: Date?, repeats: RepeatingInterval, soundName: String ) {
         self.alertBody = alertBody
         self.alertTitle = alertTitle
         self.fireDate = date
@@ -298,29 +234,20 @@ public class DLNotification {
         self.soundName = soundName
         self.identifier = identifier
         
-        if (repeats == .None) {
+        if (repeats == .none) {
             self.repeats = false
         } else {
             self.repeats = true
         }
-        
     }
     
-    // Region based notification
-    // Default notifyOnExit is false and notifyOnEntry is true
-    
-    public init (identifier:String, alertTitle:String, alertBody: String, region: CLRegion? ) {
-        
+    public init(identifier:String, alertTitle:String, alertBody: String, region: CLRegion? ) {
         self.alertBody = alertBody
         self.alertTitle = alertTitle
         self.identifier = identifier
         region?.notifyOnExit = false
         region?.notifyOnEntry = true
         self.region = region
-        
-        
     }
-    
-    
 }
 
