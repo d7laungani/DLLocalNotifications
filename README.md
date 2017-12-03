@@ -73,7 +73,7 @@ Notification that repeats from one Date to another with a time interval period
 // The date you would like the notification to fire at
 let triggerDate = Date().addingTimeInterval(300)
 
-let firstNotification = DLNotification(identifier: "firstNotification", alertTitle: "Notificaiton Alert", alertBody: "You have successfully created a notification", date: triggerDate, repeats: .None)
+let firstNotification = DLNotification(identifier: "firstNotification", alertTitle: "Notification Alert", alertBody: "You have successfully created a notification", date: triggerDate, repeats: .None)
 
 let scheduler = DLNotificationScheduler()
 scheduler.scheduleNotification(notification: firstNotification)
@@ -85,7 +85,7 @@ The configuration of the repetition is chosen in the repeats parameter that can 
 
 ```swift
 
-let firstNotification = DLNotification(identifier: "firstNotification", alertTitle: "Notificaiton Alert", alertBody: "You have successfully created a notification", date: Date(), repeats: .Minute)
+let firstNotification = DLNotification(identifier: "firstNotification", alertTitle: "Notification Alert", alertBody: "You have successfully created a notification", date: Date(), repeats: .Minute)
 
 let scheduler = DLNotificationScheduler()
 scheduler.scheduleNotification(notification: firstNotification)
@@ -101,7 +101,7 @@ let scheduler = DLNotificationScheduler()
 
 // This notification repeats every 15 seconds from a time period starting from 15 seconds from the current time till 5 minutes from the current time
 
-scheduler.repeatsFromToDate(identifier: "First Notification", alertTitle: "Multiple Notifcations", alertBody: "Progress", fromDate: Date().addingTimeInterval(15), toDate: Date().addingTimeInterval(300) , interval: 15, repeats: .None )
+scheduler.repeatsFromToDate(identifier: "First Notification", alertTitle: "Multiple Notifications", alertBody: "Progress", fromDate: Date().addingTimeInterval(15), toDate: Date().addingTimeInterval(300) , interval: 15, repeats: .None )
 
 ```
 
@@ -115,7 +115,7 @@ repeatInterval, alertBody, alertTitle, soundName, fireDate, attachments, launchI
 
 ```swift
 
-let firstNotification = DLNotification(identifier: "firstNotification", alertTitle: "Notificaiton Alert", alertBody: "You have successfully created a notification", date: Date(), repeats: .Minute)
+let firstNotification = DLNotification(identifier: "firstNotification", alertTitle: "Notification Alert", alertBody: "You have successfully created a notification", date: Date(), repeats: .Minute)
 
 // You can now change the repeat interval here
 firstNotification.repeatInterval = .Yearly
@@ -137,7 +137,7 @@ let region = CLCircularRegion(center: center, radius: 2000.0, identifier: "Headq
 region.notifyOnEntry = true
 region.notifyOnExit = false
 
-let locationNotification = DLNotification(identifier: "LocationNotification", alertTitle: "Notificaiton Alert", alertBody: "You have reached work", region: region )
+let locationNotification = DLNotification(identifier: "LocationNotification", alertTitle: "Notification Alert", alertBody: "You have reached work", region: region )
 
 let scheduler = DLNotificationScheduler()
 scheduler.scheduleNotification(notification: locationNotification)
@@ -157,7 +157,7 @@ scheduler.scheduleNotification(notification: locationNotification)
  scheduler.scheduleCategories(categories: [standingCategory])
 
 ```
-Don't forget to the set the notificaiton category before scheduling the notification using
+Don't forget to the set the notification category before scheduling the notification using
 
 ```swift
 notification.category = "standingReminder"
