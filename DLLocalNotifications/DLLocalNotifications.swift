@@ -42,7 +42,11 @@ public class DLNotificationScheduler {
                     print("Timer interval notificaiton: \(request1.nextTriggerDate().debugDescription)")
                 }
                 if let request2 =  request.trigger as?  UNCalendarNotificationTrigger {
-                    print("Repeating notification: \(request2.nextTriggerDate().debugDescription)")
+                    if(request2.repeats) {
+                        print("Calendar notification: \(request2.nextTriggerDate().debugDescription) and repeats")
+                    } else {
+                        print("Calendar notification: \(request2.nextTriggerDate().debugDescription) does not repeat")
+                    }
                 }
                 if let request3 = request.trigger as? UNLocationNotificationTrigger {
                     
@@ -144,7 +148,7 @@ public class DLNotificationScheduler {
             
             content.body = notification.alertBody!
             
-            content.sound = (notification.soundName == " ") ? UNNotificationSound.default() : UNNotificationSound.init(named: notification.soundName!)
+            content.sound = notification.soundName == "" ? UNNotificationSound.default() : UNNotificationSound.init(named: notification.soundName)
             
             if (notification.soundName == "1") { content.sound = nil}
             
@@ -269,7 +273,7 @@ public class DLNotification {
     
     var alertTitle: String?
     
-    var soundName: String?
+    var soundName: String = ""
     
     var fireDate: Date?
     
