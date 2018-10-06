@@ -36,7 +36,7 @@ It also includes all the new features, including inserting attachments and chang
 - [x] Easily Repeat Notifications
 - [x] Location Based Notifications
 - [x] Category Action buttons
-- [ ] Queue to enforce 64 notification limit
+- [x] Queue to enforce 64 notification limit
 
 ## Requirements
 
@@ -73,39 +73,40 @@ Notification that repeats from one Date to another with a time interval period
 // The date you would like the notification to fire at
 let triggerDate = Date().addingTimeInterval(300)
 
-let firstNotification = DLNotification(identifier: "firstNotification", alertTitle: "Notification Alert", alertBody: "You have successfully created a notification", date: triggerDate, repeats: .None)
+let firstNotification = DLNotification(identifier: "firstNotification", alertTitle: "Notification Alert", alertBody: "You have successfully created a notification", date: triggerDate, repeats: .none)
 
 let scheduler = DLNotificationScheduler()
 scheduler.scheduleNotification(notification: firstNotification)
+scheduler.scheduleAllNotifications()
 ```
 
 ### Repeating Notification starting at a Date
 
-The configuration of the repetition is chosen in the repeats parameter that can be [ .None, .Minute, .Hourly, .Daily, .Monthly, .Yearly] .
+The configuration of the repetition is chosen in the repeats parameter that can be [ .none, .minute, .hourly, .daily, .monthly, .yearly] .
 
 ```swift
 
-let firstNotification = DLNotification(identifier: "firstNotification", alertTitle: "Notification Alert", alertBody: "You have successfully created a notification", date: Date(), repeats: .Minute)
+let firstNotification = DLNotification(identifier: "firstNotification", alertTitle: "Notification Alert", alertBody: "You have successfully created a notification", date: Date(), repeats: .minute)
 
 let scheduler = DLNotificationScheduler()
 scheduler.scheduleNotification(notification: firstNotification)
+scheduler.scheduleAllNotifications()
 ```
 
 ### Notification that repeats from one Date to another with a time interval period
 
 This is useful to setup notifications to repeat every specific time interval for in a specific time period of the day.
-
 ```swift
 
 let scheduler = DLNotificationScheduler()
 
 // This notification repeats every 15 seconds from a time period starting from 15 seconds from the current time till 5 minutes from the current time
 
-scheduler.repeatsFromToDate(identifier: "First Notification", alertTitle: "Multiple Notifications", alertBody: "Progress", fromDate: Date().addingTimeInterval(15), toDate: Date().addingTimeInterval(300) , interval: 15, repeats: .None )
+scheduler.repeatsFromToDate(identifier: "First Notification", alertTitle: "Multiple Notifications", alertBody: "Progress", fromDate: Date().addingTimeInterval(15), toDate: Date().addingTimeInterval(300) , interval: 15, repeats: .none )
+scheduler.scheduleAllNotifications()
 
 ```
-
-Note: You have to keep into consideration the apple 64 notification limit. This function does not take that into consideration.
+Note: Since this library takes care of the 64 notification limit you would want to call scheduler.scheduleAllNotifications() in your AppDelegate file as well. 
 
 ### Modifying elements of the notification
 
@@ -115,16 +116,17 @@ repeatInterval, alertBody, alertTitle, soundName, fireDate, attachments, launchI
 
 ```swift
 
-let firstNotification = DLNotification(identifier: "firstNotification", alertTitle: "Notification Alert", alertBody: "You have successfully created a notification", date: Date(), repeats: .Minute)
+let firstNotification = DLNotification(identifier: "firstNotification", alertTitle: "Notification Alert", alertBody: "You have successfully created a notification", date: Date(), repeats: .minute)
 
 // You can now change the repeat interval here
-firstNotification.repeatInterval = .Yearly
+firstNotification.repeatInterval = .yearly
 
 // You can add a launch image name
 firstNotification.launchImageName = "Hello.png"
 
 let scheduler = DLNotificationScheduler()
 scheduler.scheduleNotification(notification: firstNotification)
+scheduler.scheduleAllNotifications()
 ```
 ### Location Based Notification
 
@@ -141,6 +143,7 @@ let locationNotification = DLNotification(identifier: "LocationNotification", al
 
 let scheduler = DLNotificationScheduler()
 scheduler.scheduleNotification(notification: locationNotification)
+scheduler.scheduleAllNotifications()
 ```
 
 ### Adding action buttons to a notification
@@ -161,6 +164,15 @@ Don't forget to the set the notification category before scheduling the notifica
 
 ```swift
 notification.category = "standingReminder"
+```
+
+### Cancelling a notification
+
+```swift
+
+ notification.cancel()
+      
+
 ```
 
 
