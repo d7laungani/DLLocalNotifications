@@ -148,7 +148,7 @@ public class DLNotificationScheduler {
             
             content.body = notification.alertBody!
             
-            content.sound = notification.soundName == "" ? UNNotificationSound.default() : UNNotificationSound.init(named: notification.soundName)
+            content.sound = notification.soundName == "" ? UNNotificationSound.default : UNNotificationSound.init(named: UNNotificationSoundName(rawValue: notification.soundName))
             
             if (notification.soundName == "1") { content.sound = nil}
             
@@ -477,4 +477,3 @@ private class DLQueue: NSObject {
     }
     
 }
-
