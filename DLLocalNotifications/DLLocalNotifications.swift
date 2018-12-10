@@ -286,7 +286,7 @@ public class DLNotification {
     
     var scheduled: Bool = false
     
-    var identifier: String?
+    public var identifier: String?
     
     var attachments: [UNNotificationAttachment]?
     
