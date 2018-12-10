@@ -177,7 +177,7 @@ public class DLNotificationScheduler {
     
     ///Persists the notifications queue to the disk
     ///> Call this method whenever you need to save changes done to the queue and/or before terminating the app.
-    fileprivate func saveQueue() -> Bool {
+    public func saveQueue() -> Bool {
         return DLQueue.queue.save()
     }
     ///- returns: Count of scheduled notifications by iOS.
