@@ -166,7 +166,11 @@ public class DLNotificationScheduler {
             notification.localNotificationRequest = UNNotificationRequest(identifier: notification.identifier!, content: content, trigger: trigger)
             
             let center = UNUserNotificationCenter.current()
-            center.add(notification.localNotificationRequest!, withCompletionHandler: {(_) in print ("completed") })
+            center.add(notification.localNotificationRequest!, withCompletionHandler: {(error) in
+                if error != nil {
+                    print(error.debugDescription)
+                }
+            })
             
             notification.scheduled = true
         }
