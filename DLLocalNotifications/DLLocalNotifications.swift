@@ -33,6 +33,15 @@ public class DLNotificationScheduler {
         notification.cancel()
     }
     
+    // Returns all notifications in the notifications queue.
+    public func notificationsQueue() -> [DLNotification] {
+        return DLQueue.queue.notificationsQueue()
+    }
+    
+    public func getNotificationFromIdentifier(identifier: String) -> DLNotification {
+        
+    }
+    
     public func printAllNotifications () {
         
         UNUserNotificationCenter.current().getPendingNotificationRequests(completionHandler: { (requests) in
