@@ -38,10 +38,6 @@ public class DLNotificationScheduler {
         return DLQueue.queue.notificationsQueue()
     }
     
-    public func getNotificationFromIdentifier(identifier: String) -> DLNotification {
-        
-    }
-    
     public func printAllNotifications () {
         
         UNUserNotificationCenter.current().getPendingNotificationRequests(completionHandler: { (requests) in
