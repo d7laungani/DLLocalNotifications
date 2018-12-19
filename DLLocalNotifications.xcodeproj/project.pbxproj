@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5526CB9620CDF6FB000B3E38 /* DLCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5526CB9520CDF6FB000B3E38 /* DLCategory.swift */; };
+		5526CB9820CDF722000B3E38 /* DLQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5526CB9720CDF722000B3E38 /* DLQueue.swift */; };
+		5526CB9C20CDF770000B3E38 /* DLNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5526CB9B20CDF770000B3E38 /* DLNotification.swift */; };
 		55EC96C81E01D63900833C1A /* DLLocalNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 55EC96BE1E01D63800833C1A /* DLLocalNotifications.framework */; };
 		55EC96CD1E01D63900833C1A /* DLLocalNotificationsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55EC96CC1E01D63900833C1A /* DLLocalNotificationsTests.swift */; };
 		55EC96CF1E01D63900833C1A /* DLLocalNotifications.h in Headers */ = {isa = PBXBuildFile; fileRef = 55EC96C11E01D63800833C1A /* DLLocalNotifications.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -24,6 +27,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		5526CB9520CDF6FB000B3E38 /* DLCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DLCategory.swift; sourceTree = "<group>"; };
+		5526CB9720CDF722000B3E38 /* DLQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DLQueue.swift; sourceTree = "<group>"; };
+		5526CB9B20CDF770000B3E38 /* DLNotification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DLNotification.swift; sourceTree = "<group>"; };
 		55EC96BE1E01D63800833C1A /* DLLocalNotifications.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DLLocalNotifications.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		55EC96C11E01D63800833C1A /* DLLocalNotifications.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DLLocalNotifications.h; sourceTree = "<group>"; };
 		55EC96C21E01D63800833C1A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -76,6 +82,9 @@
 				55EC96C11E01D63800833C1A /* DLLocalNotifications.h */,
 				55EC96C21E01D63800833C1A /* Info.plist */,
 				55EC97741E01D8C600833C1A /* DLLocalNotifications.swift */,
+				5526CB9520CDF6FB000B3E38 /* DLCategory.swift */,
+				5526CB9720CDF722000B3E38 /* DLQueue.swift */,
+				5526CB9B20CDF770000B3E38 /* DLNotification.swift */,
 			);
 			path = DLLocalNotifications;
 			sourceTree = "<group>";
@@ -204,6 +213,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				55EC97751E01D8C600833C1A /* DLLocalNotifications.swift in Sources */,
+				5526CB9620CDF6FB000B3E38 /* DLCategory.swift in Sources */,
+				5526CB9C20CDF770000B3E38 /* DLNotification.swift in Sources */,
+				5526CB9820CDF722000B3E38 /* DLQueue.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -344,7 +356,7 @@
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_SWIFT3_OBJC_INFERENCE = On;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Debug;
 		};
@@ -366,7 +378,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_SWIFT3_OBJC_INFERENCE = On;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Release;
 		};
