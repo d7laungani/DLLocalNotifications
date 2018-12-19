@@ -27,6 +27,14 @@ public class DLNotificationScheduler {
         
     }
     
+    
+    // Returns all notifications in the notifications queue.
+    public func notificationsQueue() -> [DLNotification] {
+        return DLQueue.queue.notificationsQueue()
+    }
+    
+
+    
     // Cancel the notification if scheduled or queued
     public func cancelNotification (notification: DLNotification) {
         
@@ -172,7 +180,11 @@ public class DLNotificationScheduler {
             notification.localNotificationRequest = UNNotificationRequest(identifier: notification.identifier!, content: content, trigger: trigger)
             
             let center = UNUserNotificationCenter.current()
-            center.add(notification.localNotificationRequest!, withCompletionHandler: {(_) in print ("completed") })
+            center.add(notification.localNotificationRequest!, withCompletionHandler: {(error) in
+                if error != nil {
+                    print(error.debugDescription)
+                }
+            })
             
             notification.scheduled = true
         }
@@ -183,7 +195,7 @@ public class DLNotificationScheduler {
     
     ///Persists the notifications queue to the disk
     ///> Call this method whenever you need to save changes done to the queue and/or before terminating the app.
-    fileprivate func saveQueue() -> Bool {
+    public func saveQueue() -> Bool {
         return DLQueue.queue.save()
     }
     ///- returns: Count of scheduled notifications by iOS.
