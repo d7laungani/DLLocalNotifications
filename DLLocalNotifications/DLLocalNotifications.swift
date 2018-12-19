@@ -8,7 +8,6 @@
 
 import Foundation
 import UserNotifications
-import MapKit
 
 let MAX_ALLOWED_NOTIFICATIONS = 64
 
@@ -28,14 +27,28 @@ public class DLNotificationScheduler {
         
     }
     
-    public func cancelNotification (notification: DLNotification) {
-        
-        notification.cancel()
-    }
     
     // Returns all notifications in the notifications queue.
     public func notificationsQueue() -> [DLNotification] {
         return DLQueue.queue.notificationsQueue()
+    }
+    
+
+    
+    // Cancel the notification if scheduled or queued
+    public func cancelNotification (notification: DLNotification) {
+        
+        UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [(notification.localNotificationRequest?.identifier)!])
+        let queue = DLQueue.queue.notificationsQueue()
+        var i = 0
+        for noti in queue {
+            if notification.identifier == noti.identifier {
+                DLQueue.queue.removeAtIndex(i)
+                break
+            }
+            i += 1
+        }
+        notification.scheduled = false
     }
     
     public func printAllNotifications () {
@@ -154,6 +167,7 @@ public class DLNotificationScheduler {
             content.body = notification.alertBody!
             
             content.sound = notification.soundName == "" ? UNNotificationSound.default : UNNotificationSound.init(named: UNNotificationSoundName(rawValue: notification.soundName))
+
             
             if (notification.soundName == "1") { content.sound = nil}
             
@@ -244,245 +258,6 @@ public enum RepeatingInterval: String {
     case none, minute, hourly, daily, weekly, monthly, yearly
 }
 
-// A wrapper class for creating a Category
-@available(iOS 10.0, *)
-public class DLCategory {
-    
-    private var actions: [UNNotificationAction]?
-    internal var categoryInstance: UNNotificationCategory?
-    var identifier: String
-    
-    public init (categoryIdentifier: String) {
-        
-        identifier = categoryIdentifier
-        actions = [UNNotificationAction]()
-        
-    }
-    
-    public func addActionButton(identifier: String?, title: String?) {
-        
-        let action = UNNotificationAction(identifier: identifier!, title: title!, options: [])
-        actions?.append(action)
-        categoryInstance = UNNotificationCategory(identifier: self.identifier, actions: self.actions!, intentIdentifiers: [], options: [])
-        
-    }
-    
-}
-
-// A wrapper class for creating a User Notification
-
-@available(iOS 10.0, *)
-public class DLNotification {
-    
-    internal var localNotificationRequest: UNNotificationRequest?
-    
-    var repeatInterval: RepeatingInterval = .none
-    
-    var alertBody: String?
-    
-    var alertTitle: String?
-    
-    var soundName: String = ""
-    
-    var fireDate: Date?
-    
-    var repeats: Bool = false
-    
-    var scheduled: Bool = false
-    
-    public var identifier: String?
-    
-    var attachments: [UNNotificationAttachment]?
-    
-    var launchImageName: String?
-    
-    public var category: String?
-    
-    var region: CLRegion?
-    
-    var hasDataFromBefore = false
-    
-    public init(request: UNNotificationRequest) {
-        
-        self.hasDataFromBefore = true
-        self.localNotificationRequest = request
-        if let calendarTrigger =  request.trigger as? UNCalendarNotificationTrigger {
-            self.fireDate = calendarTrigger.nextTriggerDate()
-        } else if let  intervalTrigger =  request.trigger as? UNTimeIntervalNotificationTrigger {
-            self.fireDate = intervalTrigger.nextTriggerDate()
-        }
-    }
-    
-    public init (identifier: String, alertTitle: String, alertBody: String, date: Date?, repeats: RepeatingInterval ) {
-        
-        self.alertBody = alertBody
-        self.alertTitle = alertTitle
-        self.fireDate = date
-        self.repeatInterval = repeats
-        self.identifier = identifier
-        if (repeats == .none) {
-            self.repeats = false
-        } else {
-            self.repeats = true
-        }
-        
-    }
-    
-    public init (identifier: String, alertTitle: String, alertBody: String, date: Date?, repeats: RepeatingInterval, soundName: String ) {
-        
-        self.alertBody = alertBody
-        self.alertTitle = alertTitle
-        self.fireDate = date
-        self.repeatInterval = repeats
-        self.soundName = soundName
-        self.identifier = identifier
-        
-        if (repeats == .none) {
-            self.repeats = false
-        } else {
-            self.repeats = true
-        }
-        
-    }
-    
-    // Region based notification
-    // Default notifyOnExit is false and notifyOnEntry is true
-    
-    public init (identifier: String, alertTitle: String, alertBody: String, region: CLRegion? ) {
-        
-        self.alertBody = alertBody
-        self.alertTitle = alertTitle
-        self.identifier = identifier
-        region?.notifyOnExit = false
-        region?.notifyOnEntry = true
-        self.region = region
-        
-    }
-    
-    ///Cancels the notification if scheduled or queued.
-    func cancel() {
-        UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [(self.localNotificationRequest?.identifier)!])
-        let queue = DLQueue.queue.notificationsQueue()
-        var i = 0
-        for notification in queue {
-            if self.identifier == notification.identifier {
-                DLQueue.queue.removeAtIndex(i)
-                break
-            }
-            i += 1
-        }
-        scheduled = false
-    }
-    
-}
 
 
 
-@available(iOS 10.0, *)
-public func <(lhs: DLNotification, rhs: DLNotification) -> Bool {
-    return lhs.fireDate?.compare(rhs.fireDate!) == ComparisonResult.orderedAscending
-}
-@available(iOS 10.0, *)
-public func ==(lhs: DLNotification, rhs: DLNotification) -> Bool {
-    return lhs.identifier == rhs.identifier
-}
-
-@available(iOS 10.0, *)
-private class DLQueue: NSObject {
-    
-    fileprivate var notifQueue = [DLNotification]()
-    static let queue = DLQueue()
-    let ArchiveURL = FileManager().urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent("notifications.dlqueue")
-    
-    override init() {
-        super.init()
-        if let notificationQueue = self.load() {
-            notifQueue = notificationQueue
-        }
-    }
-    
-    fileprivate func push(_ notification: DLNotification) {
-        notifQueue.insert(notification, at: findInsertionPoint(notification))
-    }
-    
-    /// Finds the position at which the new DLNotification is inserted in the queue.
-    /// - seealso: [swift-algorithm-club](https://github.com/hollance/swift-algorithm-club/tree/master/Ordered%20Array)
-    fileprivate func findInsertionPoint(_ notification: DLNotification) -> Int {
-        let range = 0..<notifQueue.count
-        var rangeLowerBound = range.lowerBound
-        var rangeUpperBound = range.upperBound
-        
-        while rangeLowerBound < rangeUpperBound {
-            let midIndex = rangeLowerBound + (rangeUpperBound - rangeLowerBound) / 2
-            if notifQueue[midIndex] == notification {
-                return midIndex
-            } else if notifQueue[midIndex] < notification {
-                rangeLowerBound = midIndex + 1
-            } else {
-                rangeUpperBound = midIndex
-            }
-        }
-        return rangeLowerBound
-    }
-    
-    ///Removes and returns the head of the queue.
-    
-    fileprivate func pop() -> DLNotification {
-        return notifQueue.removeFirst()
-    }
-    
-    //Returns the head of the queue.
-    
-    fileprivate func peek() -> DLNotification? {
-        return notifQueue.last
-    }
-    
-    ///Clears the queue.
-    
-    fileprivate func clear() {
-        notifQueue.removeAll()
-    }
-    
-    ///Called when a DLLocalnotification is cancelled.
-    
-    fileprivate func removeAtIndex(_ index: Int) {
-        notifQueue.remove(at: index)
-    }
-    
-    // Returns Count of DLNotifications in the queue.
-    fileprivate func count() -> Int {
-        return notifQueue.count
-    }
-    
-    // Returns The notifications queue.
-    fileprivate func notificationsQueue() -> [DLNotification] {
-        let queue = notifQueue
-        return queue
-    }
-    
-    // Returns DLLocalnotifcation if found, nil otherwise.
-    fileprivate func notificationWithIdentifier(_ identifier: String) -> DLNotification? {
-        for note in notifQueue {
-            if note.identifier == identifier {
-                return note
-            }
-        }
-        return nil
-    }
-    
-    
-    ///Save queue on disk.
-    
-    fileprivate func save() -> Bool {
-        return NSKeyedArchiver.archiveRootObject(self.notifQueue, toFile: ArchiveURL.path)
-    }
-    
-    ///Load queue from disk.
-    ///Called first when instantiating the DLQueue singleton.
-    ///You do not need to manually call this method
-    
-    fileprivate func load() -> [DLNotification]? {
-        return NSKeyedUnarchiver.unarchiveObject(withFile: ArchiveURL.path) as? [DLNotification]
-    }
-    
-}
