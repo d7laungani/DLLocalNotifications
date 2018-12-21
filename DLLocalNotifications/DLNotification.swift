@@ -38,7 +38,7 @@ public class DLNotification {
     var scheduled: Bool = false
     
     // Hold the identifier of the notification to keep track of it
-    var identifier: String?
+    public var identifier: String?
     
     // Hold the attachments for the notifications
     var attachments: [UNNotificationAttachment]?
