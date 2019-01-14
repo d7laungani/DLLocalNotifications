@@ -58,10 +58,6 @@ end
 ```
 Note: your iOS deployment target must be 10.0+
 
-#### Manually
-1. Download and drop ```DLLocalNotifications.swift``` in your project.  
-2. Congratulations!  
-
 ## Usage 
 
 ### Single fire notification
@@ -170,7 +166,7 @@ notification.category = "standingReminder"
 
 ```swift
 
- notification.cancel()
+ scheduler.cancelNotification(notification: notification)
       
 
 ```
