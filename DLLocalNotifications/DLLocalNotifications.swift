@@ -51,6 +51,43 @@ public class DLNotificationScheduler {
         notification.scheduled = false
     }
     
+    public func getScheduledNotification(with identifier: String, handler:@escaping (_ request:UNNotificationRequest?)-> Void) {
+        
+        
+        var foundNotification:UNNotificationRequest? = nil
+        UNUserNotificationCenter.current().getPendingNotificationRequests(completionHandler: { (requests) in
+           
+            for request  in  requests {
+                if let request1 =  request.trigger as?  UNTimeIntervalNotificationTrigger {
+                    if (request.identifier == identifier) {
+                         print("Timer interval notificaiton: \(request1.nextTriggerDate().debugDescription)")
+                        handler(request)
+                    }
+                    break
+                   
+                }
+                if let request2 =  request.trigger as?  UNCalendarNotificationTrigger {
+                    if (request.identifier == identifier) {
+                        handler(request)
+                        if(request2.repeats) {
+                            print(request)
+                            print("Calendar notification: \(request2.nextTriggerDate().debugDescription) and repeats")
+                        } else {
+                            print("Calendar notification: \(request2.nextTriggerDate().debugDescription) does not repeat")
+                        }
+                        break
+                    }
+                    
+                }
+                if let request3 = request.trigger as? UNLocationNotificationTrigger {
+                    
+                    print("Location notification: \(request3.region.debugDescription)")
+                }
+            }
+        })
+    
+    }
+    
     public func printAllNotifications () {
         
         UNUserNotificationCenter.current().getPendingNotificationRequests(completionHandler: { (requests) in
@@ -61,6 +98,7 @@ public class DLNotificationScheduler {
                 }
                 if let request2 =  request.trigger as?  UNCalendarNotificationTrigger {
                     if(request2.repeats) {
+                        print(request)
                         print("Calendar notification: \(request2.nextTriggerDate().debugDescription) and repeats")
                     } else {
                         print("Calendar notification: \(request2.nextTriggerDate().debugDescription) does not repeat")
@@ -154,10 +192,12 @@ public class DLNotificationScheduler {
             } else {
                 
                 trigger = UNCalendarNotificationTrigger(dateMatching: convertToNotificationDateComponent(notification: notification, repeatInterval: notification.repeatInterval), repeats: notification.repeats)
+                /*
                 if (notification.repeatInterval == .hourly) {
                     trigger = UNTimeIntervalNotificationTrigger.init(timeInterval: (TimeInterval(3600)), repeats: false)
                     
                 }
+ */
                 
             }
             let content = UNMutableNotificationContent()
@@ -258,6 +298,12 @@ public enum RepeatingInterval: String {
     case none, minute, hourly, daily, weekly, monthly, yearly
 }
 
+extension Date {
 
-
+func removeSeconds() -> Date {
+    let calendar = Calendar.current
+    let components = (calendar as NSCalendar).components([.year, .month, .day, .hour, .minute], from: self)
+    return calendar.date(from: components)!
+}
+}
 

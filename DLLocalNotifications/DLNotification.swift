@@ -7,8 +7,8 @@
 //
 
 // A wrapper class for creating a User Notification
-import MapKit
 import UserNotifications
+import MapKit
 
 @available(iOS 10.0, *)
 public class DLNotification {
@@ -54,6 +54,24 @@ public class DLNotification {
     
     // Internal variable needed when changint Notification types
     var hasDataFromBefore = false
+    
+    enum CodingKeys: String, CodingKey {
+        case localNotificationRequest
+        case repeatInterval
+        case alertBody
+        case alertTitle
+        case soundName
+        case fireDate
+        case repeats
+        case scheduled
+        case identifier
+        case attachments
+        case launchImageName
+        case category
+        case region
+        case hasDataFromBefore
+    }
+    
     
     public init(request: UNNotificationRequest) {
         
@@ -112,7 +130,44 @@ public class DLNotification {
         
     }
 
+    init(from decoder: Decoder) throws {
+        
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let repeatString = try container.decode(String.self, forKey: .repeatInterval)
+        self.repeatInterval = RepeatingInterval(rawValue: repeatString)!
+        self.alertTitle = try container.decodeIfPresent(String.self, forKey: .alertTitle)
+        self.alertBody = try container.decodeIfPresent(String.self, forKey: .alertBody)
+        self.soundName =  try container.decode(String.self, forKey: .soundName)
+        self.fireDate = try container.decodeIfPresent(Date.self, forKey: .fireDate)
+        self.repeats = try container.decode(Bool.self, forKey: .repeats)
+        self.scheduled = try container.decode(Bool.self, forKey: .scheduled)
+        self.identifier = try container.decodeIfPresent(String.self, forKey: .identifier)
+        self.launchImageName = try container.decodeIfPresent(String.self, forKey: .launchImageName)
+        self.category = try container.decodeIfPresent(String.self, forKey: .category)
+        self.hasDataFromBefore = try container.decode(Bool.self, forKey: .hasDataFromBefore)
+    }
+    func encode(to encoder: Encoder) throws
+    {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        
+        try container.encode(repeatInterval.rawValue, forKey: CodingKeys.repeatInterval)
+        try container.encode(alertTitle, forKey: .alertTitle)
+        try container.encode(alertBody, forKey: .alertBody)
+        try container.encode(soundName, forKey: .soundName)
+        try container.encode(fireDate, forKey: .fireDate)
+        try container.encode(repeats, forKey: .repeats)
+        try container.encode(scheduled, forKey: .scheduled)
+        try container.encode(identifier, forKey: .identifier)
+        try container.encode(launchImageName, forKey: .launchImageName)
+        try container.encode(category, forKey: .category)
+        try container.encode(hasDataFromBefore, forKey: .hasDataFromBefore)
+    }
     
+    public var debugDescription : String {
+        
+        return "<DLNotification Identifier: " + self.identifier!  + " Title: " + self.alertTitle! + ">"
+    }
 }
 
 
