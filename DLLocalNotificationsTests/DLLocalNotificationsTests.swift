@@ -121,7 +121,17 @@ class DLLocalNotificationsTests: XCTestCase {
         XCTAssertEqual(true, firstNotification.scheduled)
         scheduler.cancelNotification(notification: firstNotification)
         XCTAssertEqual(false, firstNotification.scheduled)
-        XCTAssertEqual(0, scheduler.notificationsQueue().count)
+        
+        let expectationTemp = expectation(description: "Removed from apple notification queue")
+        scheduler.scheduledCount(){ (count) -> Void in
+            XCTAssertEqual(0, count)
+            expectationTemp.fulfill()
+        }
+        
+        waitForExpectations(timeout: 10, handler: nil)
+        
+        
+       
     }
     
     
