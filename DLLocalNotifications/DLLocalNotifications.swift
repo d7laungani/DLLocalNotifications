@@ -51,6 +51,16 @@ public class DLNotificationScheduler {
         notification.scheduled = false
     }
     
+    public func getScheduledNotifications(handler:@escaping (_ request:[UNNotificationRequest]?)-> Void) {
+        
+        UNUserNotificationCenter.current().getPendingNotificationRequests(completionHandler: { (requests) in
+             handler(requests)
+        })
+        
+    }
+    
+    
+    
     public func getScheduledNotification(with identifier: String, handler:@escaping (_ request:UNNotificationRequest?)-> Void) {
         
         
@@ -90,6 +100,7 @@ public class DLNotificationScheduler {
     
     public func printAllNotifications () {
         
+        print("printing all notifications")
         UNUserNotificationCenter.current().getPendingNotificationRequests(completionHandler: { (requests) in
             print(requests.count)
             for request  in  requests {
@@ -192,12 +203,12 @@ public class DLNotificationScheduler {
             } else {
                 
                 trigger = UNCalendarNotificationTrigger(dateMatching: convertToNotificationDateComponent(notification: notification, repeatInterval: notification.repeatInterval), repeats: notification.repeats)
-                /*
-                if (notification.repeatInterval == .hourly) {
-                    trigger = UNTimeIntervalNotificationTrigger.init(timeInterval: (TimeInterval(3600)), repeats: false)
+                
+                if (notification.repeatInterval == .minute) {
+                    trigger = UNTimeIntervalNotificationTrigger.init(timeInterval: (TimeInterval(60)), repeats: false)
                     
                 }
- */
+ 
                 
             }
             let content = UNMutableNotificationContent()
