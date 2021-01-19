@@ -72,7 +72,7 @@ class DLLocalNotificationsTests: XCTestCase {
         // The date you would like the notification to fire at 30 second mark of every minute
         let triggerDate = Date().addingTimeInterval(300)
         
-        let firstNotification = DLNotification(identifier: "firstNotification", alertTitle: "Notification Alert", alertBody: "You have successfully created a notification", date: triggerDate, repeats: false)
+        let firstNotification = DLNotification(identifier: "firstNotification", alertTitle: "Notification Alert", alertBody: "You have successfully created a notification", date: triggerDate)
         
         scheduler.scheduleNotification(notification: firstNotification)
         XCTAssertEqual(1, scheduler.notificationsQueue().count)
@@ -184,7 +184,7 @@ class DLLocalNotificationsTests: XCTestCase {
     func testNotificationCancel() {
         let triggerDate = Date().addingTimeInterval(300)
         
-        let firstNotification = DLNotification(identifier: "firstNotification", alertTitle: "Notification Alert", alertBody: "You have successfully created a notification", date: triggerDate, repeats: false)
+        let firstNotification = DLNotification(identifier: "firstNotification", alertTitle: "Notification Alert", alertBody: "You have successfully created a notification", date: triggerDate)
         
         scheduler.scheduleNotification(notification: firstNotification)
         XCTAssertEqual(1, scheduler.notificationsQueue().count)
@@ -220,7 +220,7 @@ class DLLocalNotificationsTests: XCTestCase {
     func testNotificationCancelWithIdentifier() {
         let triggerDate = Date().addingTimeInterval(300)
         let identifier = "firstNotification"
-        let firstNotification = DLNotification(identifier: identifier, alertTitle: "Notification Alert", alertBody: "You have successfully created a notification", date: triggerDate, repeats: false)
+        let firstNotification = DLNotification(identifier: identifier, alertTitle: "Notification Alert", alertBody: "You have successfully created a notification", date: triggerDate)
         
         scheduler.scheduleNotification(notification: firstNotification)
         XCTAssertEqual(1, scheduler.notificationsQueue().count)
@@ -264,7 +264,7 @@ class DLLocalNotificationsTests: XCTestCase {
         // The date you would like the notification to fire at
         let triggerDate = Date().addingTimeInterval(20)
         
-        let firstNotification = DLNotification(identifier: "firstNotification", alertTitle: "Notification Alert", alertBody: "You have successfully created a notification", date: triggerDate, repeats:false)
+        let firstNotification = DLNotification(identifier: "firstNotification", alertTitle: "Notification Alert", alertBody: "You have successfully created a notification", date: triggerDate)
         
         firstNotification.launchImageName = "test.png"
         

@@ -9,7 +9,7 @@
 [![Build Status](https://travis-ci.org/d7laungani/DLLocalNotifications.svg?branch=master)](https://travis-ci.org/d7laungani/DLLocalNotifications)
 [![License][license-image]][license-url]
 
-In IOS 10, apple updated their library for Notifications and separated Local and push notifications to a new framework: 
+In IOS 10, apple updated their library for Notifications and separated Local and push notifications to a new framework:
 
 [User Notifications](https://developer.apple.com/reference/usernotifications)
 
@@ -58,31 +58,40 @@ end
 ```
 Note: your iOS deployment target must be 10.0+
 
-## Usage 
+## Usage
 
-### Single fire notification
+### Single fire notification (any date)
 
 Notification that repeats from one Date to another with a time interval period
+
+Note: If you want the notification to repeat then you need to create a 
+notification based on date components
 
 ```swift
 
 // The date you would like the notification to fire at
 let triggerDate = Date().addingTimeInterval(300)
 
-let firstNotification = DLNotification(identifier: "firstNotification", alertTitle: "Notification Alert", alertBody: "You have successfully created a notification", date: triggerDate, repeats: .none)
+let firstNotification = DLNotification(identifier: "firstNotification", alertTitle: "Notification Alert", alertBody: "You have successfully created a notification", date: triggerDate)
 
 let scheduler = DLNotificationScheduler()
 scheduler.scheduleNotification(notification: firstNotification)
 scheduler.scheduleAllNotifications()
 ```
 
-### Repeating Notification starting at a Date
+### Repeating Notification based on date components
 
 The configuration of the repetition is chosen in the repeats parameter that can be [ .none, .minute, .hourly, .daily, .monthly, .yearly] .
 
 ```swift
 
-let firstNotification = DLNotification(identifier: "firstNotification", alertTitle: "Notification Alert", alertBody: "You have successfully created a notification", date: Date(), repeats: .minute)
+// The date you would like the notification to fire at :35 mins every hour
+
+var dateComponents = DateComponents()
+dateComponents.minute = 35
+dateComponents.second = 0
+
+let firstNotification = DLNotification(identifier: "hourlyNotification", alertTitle: "Notification Alert", alertBody: "You have successfully created a notification", fromDateComponents: dateComponents, repeatInterval: .hourly)
 
 let scheduler = DLNotificationScheduler()
 scheduler.scheduleNotification(notification: firstNotification)
@@ -102,7 +111,7 @@ scheduler.repeatsFromToDate(identifier: "First Notification", alertTitle: "Multi
 scheduler.scheduleAllNotifications()
 
 ```
-Note: Since this library takes care of the 64 notification limit you would want to call scheduler.scheduleAllNotifications() in your AppDelegate file as well. 
+Note: Since this library takes care of the 64 notification limit you would want to call scheduler.scheduleAllNotifications() in your AppDelegate file as well.
 
 ### Modifying elements of the notification
 
@@ -147,12 +156,12 @@ scheduler.scheduleAllNotifications()
 ```swift
 
  let scheduler = DLNotificationScheduler()
-        
+
  let standingCategory = DLCategory(categoryIdentifier: "standingReminder")
-        
+
  standingCategory.addActionButton(identifier: "willStand", title: "Ok, got it")
  standingCategory.addActionButton(identifier: "willNotStand", title: "Cannot")
-        
+
  scheduler.scheduleCategories(categories: [standingCategory])
 
 ```
@@ -167,7 +176,7 @@ notification.category = "standingReminder"
 ```swift
 
  scheduler.cancelNotification(notification: notification)
-      
+
 
 ```
 

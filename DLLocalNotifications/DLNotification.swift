@@ -103,14 +103,13 @@ public class DLNotification {
         
     }
     
-    public init (identifier: String, alertTitle: String, alertBody: String, date: Date , repeats: Bool ) {
+    public init (identifier: String, alertTitle: String, alertBody: String, date: Date ) {
         
         self.alertBody = alertBody
         self.alertTitle = alertTitle
         self.fireDate = date
         self.repeatInterval = .none
         self.identifier = identifier
-        self.repeats = repeats
         
     }
     
