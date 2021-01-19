@@ -18,6 +18,13 @@ class DLLocalNotificationsTests: XCTestCase {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
         
+        addUIInterruptionMonitor(withDescription: "Allow push") { (alerts) -> Bool in
+            if(alerts.buttons["Allow"].exists){
+                alerts.buttons["Allow"].tap();
+            }
+            return true;
+        }
+        
         scheduler.cancelAlllNotifications()
     }
     
@@ -27,31 +34,82 @@ class DLLocalNotificationsTests: XCTestCase {
         scheduler.cancelAlllNotifications()
     }
     
+    func testBasicNotification() {
+        
+        let content = UNMutableNotificationContent()
+        content.title = "Feed the cat"
+        content.subtitle = "It looks hungry"
+        content.sound = UNNotificationSound.default()
+        
+        // show this notification five seconds from now
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)
+        
+        // choose a random identifier
+        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
+        
+        // add our notification request
+        //UNUserNotificationCenter.current().add(request)
+        let center = UNUserNotificationCenter.current()
+        center.add(request) { (error) in
+            print(error.debugDescription)
+        }
+        
+        let expectationTemp = expectation(description: "Notification not scheduled")
+        
+        UNUserNotificationCenter.current().getPendingNotificationRequests(completionHandler: { (requests) in
+            XCTAssertEqual(1, requests.count)
+            expectationTemp.fulfill()
+            
+        })
+        
+        waitForExpectations(timeout: 10, handler: nil)
+        
+    }
     
     func testSingleFireNotification() {
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // The date you would like the notification to fire at
+        // The date you would like the notification to fire at 30 second mark of every minute
         let triggerDate = Date().addingTimeInterval(300)
         
-        let firstNotification = DLNotification(identifier: "firstNotification", alertTitle: "Notification Alert", alertBody: "You have successfully created a notification", date: triggerDate, repeats: .none)
+        let firstNotification = DLNotification(identifier: "firstNotification", alertTitle: "Notification Alert", alertBody: "You have successfully created a notification", date: triggerDate, repeats: false)
         
         scheduler.scheduleNotification(notification: firstNotification)
         XCTAssertEqual(1, scheduler.notificationsQueue().count)
         scheduler.scheduleAllNotifications()
         XCTAssertEqual(0, scheduler.notificationsQueue().count)
         XCTAssertEqual(true, firstNotification.scheduled)
-    
+        
+        
+        let expectationTemp = expectation(description: "Notification not scheduled")
+        
+        
+        scheduler.getScheduledNotification(with: firstNotification.identifier!){ (request) -> Void in
+            if let request = request{
+                
+                let trigger =  request.trigger as?  UNCalendarNotificationTrigger
+                XCTAssertEqual(request.identifier, firstNotification.identifier)
+                XCTAssertEqual(triggerDate.timeIntervalSince1970.rounded(), (trigger?.nextTriggerDate()?.timeIntervalSince1970.rounded())!, accuracy: 0.001)
+                XCTAssertFalse(trigger!.repeats)
+                
+                expectationTemp.fulfill()
+            }
+        }
+        
+        waitForExpectations(timeout: 10, handler: nil)
+        
     }
     
     func testRepeatingNotificationMinute() {
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // The date you would like the notification to fire at
-        let triggerDate = Date().addingTimeInterval(0)
         
-        let firstNotification = DLNotification(identifier: "firstNotification", alertTitle: "Notification Alert", alertBody: "You have successfully created a notification", date: triggerDate, repeats: .minute)
-
+        // The date you would like the notification to fire at 30 second mark of every minute
+        var dateComponents = DateComponents()
+        dateComponents.second = 30
+        
+        let firstNotification = DLNotification(identifier: "firstNotification", alertTitle: "Notification Alert", alertBody: "You have successfully created a notification", fromDateComponents: dateComponents, repeatInterval: .minute)
+        
         scheduler.scheduleNotification(notification: firstNotification)
         XCTAssertEqual(1, scheduler.notificationsQueue().count)
         scheduler.scheduleAllNotifications()
@@ -59,14 +117,18 @@ class DLLocalNotificationsTests: XCTestCase {
         XCTAssertEqual(true, firstNotification.scheduled)
         
         let expectationTemp = expectation(description: "Next Trigger Date Does not match expectation")
-
-       
+        
+        
         scheduler.getScheduledNotification(with: firstNotification.identifier!){ (request) -> Void in
             if let request = request{
                 let trigger =  request.trigger as?  UNCalendarNotificationTrigger
+                
+                var actualTriggerTime = Calendar.current.dateComponents([ .second], from: (trigger!.nextTriggerDate())!)
+                
 
-                XCTAssertEqual(triggerDate.addingTimeInterval(60).removeSeconds().timeIntervalSince1970, (trigger?.nextTriggerDate()?.removeSeconds().timeIntervalSince1970)!, accuracy: 0.001)
-
+                XCTAssertEqual(dateComponents,actualTriggerTime)
+                XCTAssertTrue(trigger!.repeats)
+                
                 expectationTemp.fulfill()
             }
         }
@@ -80,10 +142,14 @@ class DLLocalNotificationsTests: XCTestCase {
     func testRepeatingNotificationHour() {
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // The date you would like the notification to fire at
-        let triggerDate = Date().addingTimeInterval(0)
         
-        let firstNotification = DLNotification(identifier: "hourlyNotification", alertTitle: "Notification Alert", alertBody: "You have successfully created a notification", date: triggerDate, repeats: .hourly)
+        // The date you would like the notification to fire at :30 mins every hour
+        
+        var dateComponents = DateComponents()
+        dateComponents.minute = 30
+        dateComponents.second = 0
+
+        let firstNotification = DLNotification(identifier: "hourlyNotification", alertTitle: "Notification Alert", alertBody: "You have successfully created a notification", fromDateComponents: dateComponents, repeatInterval: .hourly)
         
         scheduler.scheduleNotification(notification: firstNotification)
         XCTAssertEqual(1, scheduler.notificationsQueue().count)
@@ -95,8 +161,14 @@ class DLLocalNotificationsTests: XCTestCase {
         scheduler.getScheduledNotification(with: firstNotification.identifier!){ (request) -> Void in
             if let request = request{
                 let trigger =  request.trigger as?  UNCalendarNotificationTrigger
+
+            
+                var actualTriggerTime = Calendar.current.dateComponents([ .minute, .second], from: (trigger!.nextTriggerDate())!)
                 
-                XCTAssertEqual(triggerDate.addingTimeInterval(3600).removeSeconds().timeIntervalSince1970, (trigger?.nextTriggerDate()?.removeSeconds().timeIntervalSince1970)!, accuracy: 0.001)
+
+                XCTAssertEqual(dateComponents,actualTriggerTime)
+                XCTAssertTrue(trigger!.repeats)
+
                 
                 expectationTemp.fulfill()
             }
@@ -108,22 +180,31 @@ class DLLocalNotificationsTests: XCTestCase {
         
     }
     
-  
+    
     func testNotificationCancel() {
         let triggerDate = Date().addingTimeInterval(300)
         
-        let firstNotification = DLNotification(identifier: "firstNotification", alertTitle: "Notification Alert", alertBody: "You have successfully created a notification", date: triggerDate, repeats: .none)
+        let firstNotification = DLNotification(identifier: "firstNotification", alertTitle: "Notification Alert", alertBody: "You have successfully created a notification", date: triggerDate, repeats: false)
         
         scheduler.scheduleNotification(notification: firstNotification)
         XCTAssertEqual(1, scheduler.notificationsQueue().count)
         scheduler.scheduleAllNotifications()
         XCTAssertEqual(0, scheduler.notificationsQueue().count)
         XCTAssertEqual(true, firstNotification.scheduled)
+        
+        let expectationTemp1 = expectation(description: "Initial Notification exists")
+        
+        scheduler.getScheduledNotifications { (requests) in
+            XCTAssertEqual(1, requests?.count)
+            expectationTemp1.fulfill()
+        }
+        
+        
         scheduler.cancelNotification(notification: firstNotification)
         XCTAssertEqual(false, firstNotification.scheduled)
         
         let expectationTemp = expectation(description: "Removed from apple notification queue")
-    
+        
         scheduler.getScheduledNotifications { (requests) in
             XCTAssertEqual(0, requests?.count)
             expectationTemp.fulfill()
@@ -133,16 +214,9 @@ class DLLocalNotificationsTests: XCTestCase {
         waitForExpectations(timeout: 10, handler: nil)
         
         
-       
+        
     }
     
-    
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
-    }
     
     
     // Regression tests
@@ -154,7 +228,7 @@ class DLLocalNotificationsTests: XCTestCase {
         // The date you would like the notification to fire at
         let triggerDate = Date().addingTimeInterval(20)
         
-        let firstNotification = DLNotification(identifier: "firstNotification", alertTitle: "Notification Alert", alertBody: "You have successfully created a notification", date: triggerDate, repeats: .none)
+        let firstNotification = DLNotification(identifier: "firstNotification", alertTitle: "Notification Alert", alertBody: "You have successfully created a notification", date: triggerDate, repeats:false)
         
         firstNotification.launchImageName = "test.png"
         
@@ -163,20 +237,20 @@ class DLLocalNotificationsTests: XCTestCase {
         scheduler.scheduleAllNotifications()
         XCTAssertEqual(0, scheduler.notificationsQueue().count)
         XCTAssertEqual(true, firstNotification.scheduled)
-       
+        
         let expectationTemp = expectation(description: "Launch Image is set on notification")
-
+        
         scheduler.getScheduledNotification(with: firstNotification.identifier!){ (request) -> Void in
             if let request = request{
-            
+                
                 XCTAssertNotNil(request.content.launchImageName)
-            
+                
                 expectationTemp.fulfill()
             }
         }
         
         waitForExpectations(timeout: 10, handler: nil)
-
+        
     }
     
     // Issue #25
@@ -188,27 +262,54 @@ class DLLocalNotificationsTests: XCTestCase {
         let triggerDate6pm = Calendar.current.date(bySettingHour: 18, minute: 0, second: 0, of: Date())!
         
         scheduler.repeatsFromToDate(identifier: "First Notification", alertTitle: "Multiple Notifications", alertBody: "Progress", fromDate: triggerDate9am, toDate: triggerDate6pm , interval: 10800, repeats: .daily )
-    
+        
         XCTAssertEqual(4, scheduler.notificationsQueue().count)
         scheduler.scheduleAllNotifications()
         XCTAssertEqual(0, scheduler.notificationsQueue().count)
-    
+        
+        let calendar = Calendar.current
+        
+        
         let expectationTemp = expectation(description: "All Notifications scheduled")
         scheduler.getScheduledNotifications { (requests) in
+            
             XCTAssertEqual(4, requests?.count)
+            
+            let triggerDate12pm = calendar.date(bySettingHour: 12, minute: 0, second: 0, of: Date())!
+            let triggerDate3pm = calendar.date(bySettingHour: 15, minute: 0, second: 0, of: Date())!
+
+            var expectedDates:[Date] = [triggerDate6pm, triggerDate3pm, triggerDate12pm,triggerDate9am]
+
+            for   (index, request) in requests!.enumerated() {
+                
+                    var trigger =  request.trigger as?  UNCalendarNotificationTrigger
+                    var expectedTriggerTime =  calendar.dateComponents([.hour, .minute], from: expectedDates[index])
+                    var actualTriggerTime =  calendar.dateComponents([.hour, .minute], from: (trigger?.nextTriggerDate())!)
+                    XCTAssertEqual(expectedTriggerTime,actualTriggerTime)
+                                
+            
+        
+            }
+            
+            
+            
             expectationTemp.fulfill()
         }
-    
+        
         waitForExpectations(timeout: 10, handler: nil)
-
+        
         
     }
     
+    /*
     // Issue #15
     public func testDelayedNotificationFiringImmediatelyForMinuteRepetition() {
         
-        let triggerDate = Date().addingTimeInterval(600)
-        let firstNotification = DLNotification(identifier: "firstNotification", alertTitle: "Notification Alert", alertBody: "You have successfully created a notification", date: triggerDate, repeats: .minute)
+        // The date you would like the notification to fire at 30 second mark of every minute
+        var dateComponents = DateComponents()
+        dateComponents.seconds = 30
+        
+        let firstNotification = DLNotification(identifier: "firstNotification", alertTitle: "Notification Alert", alertBody: "You have successfully created a notification",  fromDateComponents: dateComponents, repeatInterval: .minute)
         
         let scheduler = DLNotificationScheduler()
         scheduler.scheduleNotification(notification: firstNotification)
@@ -217,23 +318,29 @@ class DLLocalNotificationsTests: XCTestCase {
         scheduler.scheduleAllNotifications()
         XCTAssertEqual(0, scheduler.notificationsQueue().count)
         
+        let calendar = Calendar.current
+
+        
         let expectationTemp = expectation(description: "All Notifications scheduled")
         scheduler.getScheduledNotifications { (requests) in
             
-            let request = requests![0]
-            if let request2 =  request.trigger as?  UNCalendarNotificationTrigger {
-                
-                        XCTAssertEqual(Calendar.current.component(.hour, from:triggerDate), Calendar.current.component(.hour, from: request2.nextTriggerDate()!))
-                        
-                         XCTAssertEqual(Calendar.current.component(.minute, from:triggerDate), Calendar.current.component(.minute, from: request2.nextTriggerDate()!))
-                        
-                        print("Calendar notification: \(request2.nextTriggerDate().debugDescription) and repeats")
-                
-                
-                
-            }
-        
-            expectationTemp.fulfill()
+            
+            if let request = requests?[safe: 0] {
+                if let request2 =  request.trigger as?  UNCalendarNotificationTrigger {
+                    
+                    var expectedTriggerTime =  calendar.dateComponents([.hour, .minute], from: triggerDate)
+                    var actualTriggerTime =  calendar.dateComponents([.hour, .minute], from: (request2.nextTriggerDate())!)
+                    
+                    print("expected :" + triggerDate.debugDescription)
+                    print("actual :" + request2.nextTriggerDate().debugDescription)
+                    
+                    XCTAssertEqual(expectedTriggerTime,actualTriggerTime)
+                    
+                    
+                    expectationTemp.fulfill()
+                    
+                }}
+            
         }
         
         waitForExpectations(timeout: 10, handler: nil)
@@ -255,23 +362,29 @@ class DLLocalNotificationsTests: XCTestCase {
         scheduler.scheduleAllNotifications()
         XCTAssertEqual(0, scheduler.notificationsQueue().count)
         
+        let calendar = Calendar.current
+
+        
         let expectationTemp = expectation(description: "All Notifications scheduled")
         scheduler.getScheduledNotifications { (requests) in
             
-            let request = requests![0]
-            if let request2 =  request.trigger as?  UNCalendarNotificationTrigger {
-                
-                XCTAssertEqual(Calendar.current.component(.hour, from:triggerDate), Calendar.current.component(.hour, from: request2.nextTriggerDate()!))
-                
-                XCTAssertEqual(Calendar.current.component(.minute, from:triggerDate), Calendar.current.component(.minute, from: request2.nextTriggerDate()!))
-                
-                print("Calendar notification: \(request2.nextTriggerDate().debugDescription) and repeats")
-                
-                
-                
-            }
+            if let request = requests?[safe: 0]  {
+                if let request2 =  request.trigger as?  UNCalendarNotificationTrigger {
+                    
+                    var expectedTriggerTime =  calendar.dateComponents([.hour, .minute], from: triggerDate)
+                    var actualTriggerTime =  calendar.dateComponents([.hour, .minute], from: (request2.nextTriggerDate())!)
+                    
+                    print("expected :" + triggerDate.debugDescription)
+                    print("actual :" + request2.nextTriggerDate().debugDescription)
+
+                    XCTAssertEqual(expectedTriggerTime,actualTriggerTime)
+                    
+                    XCTAssertEqual(request2.nextTriggerDate()!.days(from: triggerDate), 1)
+                    expectationTemp.fulfill()
+                    
+                    
+                }}
             
-            expectationTemp.fulfill()
         }
         
         waitForExpectations(timeout: 10, handler: nil)
@@ -279,5 +392,21 @@ class DLLocalNotificationsTests: XCTestCase {
         
         
     }
+    */
+}
+
+extension Collection {
     
+    /// Returns the element at the specified index if it is within bounds, otherwise nil.
+    subscript (safe index: Index) -> Element? {
+        return indices.contains(index) ? self[index] : nil
+    }
+}
+extension Date {
+
+/// Returns the amount of days from another date
+func days(from date: Date) -> Int {
+    return Calendar.current.dateComponents([.day], from: date, to: self).day ?? 0
+}
+
 }

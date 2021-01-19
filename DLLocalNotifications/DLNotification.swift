@@ -55,6 +55,9 @@ public class DLNotification {
     // Internal variable needed when changint Notification types
     var hasDataFromBefore = false
     
+    // Holds date components for a repeating notification
+    public var fromDateComponents: DateComponents?
+    
     enum CodingKeys: String, CodingKey {
         case localNotificationRequest
         case repeatInterval
@@ -70,6 +73,7 @@ public class DLNotification {
         case category
         case region
         case hasDataFromBefore
+        case fromDateComponents
     }
     
     
@@ -84,13 +88,13 @@ public class DLNotification {
         }
     }
     
-    public init (identifier: String, alertTitle: String, alertBody: String, date: Date?, repeats: RepeatingInterval ) {
+    public init (identifier: String, alertTitle: String, alertBody: String, fromDateComponents: DateComponents, repeatInterval: RepeatingInterval ) {
         
         self.alertBody = alertBody
         self.alertTitle = alertTitle
-        self.fireDate = date
-        self.repeatInterval = repeats
+        self.repeatInterval = repeatInterval
         self.identifier = identifier
+        self.fromDateComponents = fromDateComponents
         if (repeats == .none) {
             self.repeats = false
         } else {
@@ -99,22 +103,17 @@ public class DLNotification {
         
     }
     
-    public init (identifier: String, alertTitle: String, alertBody: String, date: Date?, repeats: RepeatingInterval, soundName: String ) {
+    public init (identifier: String, alertTitle: String, alertBody: String, date: Date? , repeats: Bool ) {
         
         self.alertBody = alertBody
         self.alertTitle = alertTitle
         self.fireDate = date
-        self.repeatInterval = repeats
-        self.soundName = soundName
+        self.repeatInterval = .none
         self.identifier = identifier
-        
-        if (repeats == .none) {
-            self.repeats = false
-        } else {
-            self.repeats = true
-        }
+        self.repeats = repeats
         
     }
+    
     
     // Region based notification
     // Default notifyOnExit is false and notifyOnEntry is true
@@ -145,6 +144,8 @@ public class DLNotification {
         self.launchImageName = try container.decodeIfPresent(String.self, forKey: .launchImageName)
         self.category = try container.decodeIfPresent(String.self, forKey: .category)
         self.hasDataFromBefore = try container.decode(Bool.self, forKey: .hasDataFromBefore)
+        //self.fromDateComponents = try container.decode(DateComponents.self, forKey: .fromDateComponents)
+
     }
     func encode(to encoder: Encoder) throws
     {
@@ -162,6 +163,8 @@ public class DLNotification {
         try container.encode(launchImageName, forKey: .launchImageName)
         try container.encode(category, forKey: .category)
         try container.encode(hasDataFromBefore, forKey: .hasDataFromBefore)
+        //try container.encode(fromDateComponents, forKey: .fromDateComponents)
+
     }
     
     public var debugDescription : String {
