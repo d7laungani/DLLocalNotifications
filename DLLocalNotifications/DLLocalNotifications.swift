@@ -40,7 +40,19 @@ public class DLNotificationScheduler {
         
         let identifier = (notification.localNotificationRequest != nil) ? notification.localNotificationRequest?.identifier : notification.identifier
         
-        UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [identifier!])
+        cancelNotificationWithIdentifier(identifier: identifier!)
+        notification.scheduled = false
+    }
+    
+    // Cancel the notification if scheduled or queued
+    public func cancelNotification (identifier : String) {
+    
+        
+        cancelNotificationWithIdentifier(identifier: identifier)
+    }
+    
+    private func cancelNotificationWithIdentifier (identifier: String) {
+        UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [identifier])
         
         let queue = DLQueue.queue.notificationsQueue()
         var i = 0
@@ -51,7 +63,7 @@ public class DLNotificationScheduler {
             }
             i += 1
         }
-        notification.scheduled = false
+        
     }
     
     public func getScheduledNotifications(handler:@escaping (_ request:[UNNotificationRequest]?)-> Void) {

@@ -217,6 +217,41 @@ class DLLocalNotificationsTests: XCTestCase {
         
     }
     
+    func testNotificationCancelWithIdentifier() {
+        let triggerDate = Date().addingTimeInterval(300)
+        let identifier = "firstNotification"
+        let firstNotification = DLNotification(identifier: identifier, alertTitle: "Notification Alert", alertBody: "You have successfully created a notification", date: triggerDate, repeats: false)
+        
+        scheduler.scheduleNotification(notification: firstNotification)
+        XCTAssertEqual(1, scheduler.notificationsQueue().count)
+        scheduler.scheduleAllNotifications()
+        XCTAssertEqual(0, scheduler.notificationsQueue().count)
+        XCTAssertEqual(true, firstNotification.scheduled)
+        
+        let expectationTemp1 = expectation(description: "Initial Notification exists")
+        
+        scheduler.getScheduledNotifications { (requests) in
+            XCTAssertEqual(1, requests?.count)
+            expectationTemp1.fulfill()
+        }
+        
+        
+        scheduler.cancelNotification(identifier: identifier)
+        
+        let expectationTemp = expectation(description: "Removed from apple notification queue")
+        
+        scheduler.getScheduledNotifications { (requests) in
+            XCTAssertEqual(0, requests?.count)
+            expectationTemp.fulfill()
+        }
+        
+        
+        waitForExpectations(timeout: 10, handler: nil)
+        
+        
+        
+    }
+    
     
     
     // Regression tests
