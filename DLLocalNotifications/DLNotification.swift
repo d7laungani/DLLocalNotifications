@@ -103,7 +103,7 @@ public class DLNotification {
         
     }
     
-    public init (identifier: String, alertTitle: String, alertBody: String, date: Date? , repeats: Bool ) {
+    public init (identifier: String, alertTitle: String, alertBody: String, date: Date , repeats: Bool ) {
         
         self.alertBody = alertBody
         self.alertTitle = alertTitle
@@ -118,13 +118,13 @@ public class DLNotification {
     // Region based notification
     // Default notifyOnExit is false and notifyOnEntry is true
     
-    public init (identifier: String, alertTitle: String, alertBody: String, region: CLRegion? ) {
+    public init (identifier: String, alertTitle: String, alertBody: String, region: CLRegion ) {
         
         self.alertBody = alertBody
         self.alertTitle = alertTitle
         self.identifier = identifier
-        region?.notifyOnExit = false
-        region?.notifyOnEntry = true
+        region.notifyOnExit = false
+        region.notifyOnEntry = true
         self.region = region
         
     }

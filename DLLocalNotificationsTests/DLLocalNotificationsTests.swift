@@ -89,7 +89,7 @@ class DLLocalNotificationsTests: XCTestCase {
                 
                 let trigger =  request.trigger as?  UNCalendarNotificationTrigger
                 XCTAssertEqual(request.identifier, firstNotification.identifier)
-                XCTAssertEqual(triggerDate.timeIntervalSince1970.rounded(), (trigger?.nextTriggerDate()?.timeIntervalSince1970.rounded())!, accuracy: 0.001)
+                XCTAssertEqual(triggerDate.timeIntervalSince1970.rounded(), (trigger?.nextTriggerDate()?.timeIntervalSince1970.rounded())!, accuracy: 0.002)
                 XCTAssertFalse(trigger!.repeats)
                 
                 expectationTemp.fulfill()
@@ -256,6 +256,7 @@ class DLLocalNotificationsTests: XCTestCase {
     
     // Regression tests
     
+
     // Issue #26
     func testSettingALaunchImage() {
         // This is an example of a functional test case.
@@ -287,6 +288,7 @@ class DLLocalNotificationsTests: XCTestCase {
         waitForExpectations(timeout: 10, handler: nil)
         
     }
+    
     
     // Issue #25
     public func testRepeatEvery3Hrs() {

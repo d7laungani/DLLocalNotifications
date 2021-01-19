@@ -185,7 +185,6 @@ public class DLNotificationScheduler {
         
     }
     
-    
     public func scheduleAllNotifications () {
         
         let queue = DLQueue.queue.notificationsQueue()
