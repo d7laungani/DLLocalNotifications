@@ -110,6 +110,7 @@ public class DLNotification {
         self.fireDate = date
         self.repeatInterval = .none
         self.identifier = identifier
+        self.repeats = false
         
     }
     

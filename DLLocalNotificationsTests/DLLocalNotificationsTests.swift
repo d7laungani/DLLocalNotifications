@@ -13,18 +13,12 @@ import UserNotifications
 class DLLocalNotificationsTests: XCTestCase {
     
     let scheduler = DLNotificationScheduler()
-    
+
+
     override func setUp() {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
-        
-        addUIInterruptionMonitor(withDescription: "Allow push") { (alerts) -> Bool in
-            if(alerts.buttons["Allow"].exists){
-                alerts.buttons["Allow"].tap();
-            }
-            return true;
-        }
-        
+       
         scheduler.cancelAlllNotifications()
     }
     
