@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0820"
+   LastUpgradeVersion = "1200"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "55EC96BD1E01D63800833C1A"
-               BuildableName = "DLLocalNotifications.framework"
-               BlueprintName = "DLLocalNotifications"
+               BlueprintIdentifier = "FAE044AE21EBFA1B005D94F9"
+               BuildableName = "DLLocalNotificationsHost.app"
+               BlueprintName = "DLLocalNotificationsHost"
                ReferencedContainer = "container:DLLocalNotifications.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -27,23 +27,14 @@
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "55EC96BD1E01D63800833C1A"
-            BuildableName = "DLLocalNotifications.framework"
-            BlueprintName = "DLLocalNotifications"
-            ReferencedContainer = "container:DLLocalNotifications.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
       <Testables>
          <TestableReference
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "55EC96C61E01D63900833C1A"
-               BuildableName = "DLLocalNotificationsTests.xctest"
-               BlueprintName = "DLLocalNotificationsTests"
+               BlueprintIdentifier = "FA9BB71525B7CFD0009F25DA"
+               BuildableName = "DLLocalNotificationsHostUITests.xctest"
+               BlueprintName = "DLLocalNotificationsHostUITests"
                ReferencedContainer = "container:DLLocalNotifications.xcodeproj">
             </BuildableReference>
          </TestableReference>
@@ -59,15 +50,16 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
-      <MacroExpansion>
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "55EC96BD1E01D63800833C1A"
-            BuildableName = "DLLocalNotifications.framework"
-            BlueprintName = "DLLocalNotifications"
+            BlueprintIdentifier = "FAE044AE21EBFA1B005D94F9"
+            BuildableName = "DLLocalNotificationsHost.app"
+            BlueprintName = "DLLocalNotificationsHost"
             ReferencedContainer = "container:DLLocalNotifications.xcodeproj">
          </BuildableReference>
-      </MacroExpansion>
+      </BuildableProductRunnable>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
@@ -75,15 +67,16 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
-      <MacroExpansion>
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "55EC96BD1E01D63800833C1A"
-            BuildableName = "DLLocalNotifications.framework"
-            BlueprintName = "DLLocalNotifications"
+            BlueprintIdentifier = "FAE044AE21EBFA1B005D94F9"
+            BuildableName = "DLLocalNotificationsHost.app"
+            BlueprintName = "DLLocalNotificationsHost"
             ReferencedContainer = "container:DLLocalNotifications.xcodeproj">
          </BuildableReference>
-      </MacroExpansion>
+      </BuildableProductRunnable>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">
