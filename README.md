@@ -62,7 +62,7 @@ Note: your iOS deployment target must be 10.0+
 
 ### Single fire notification (any date)
 
-Notification that repeats from one Date to another with a time interval period
+Notification that fires once at the date time inputted
 
 Note: If you want the notification to repeat then you need to create a 
 notification based on date components
