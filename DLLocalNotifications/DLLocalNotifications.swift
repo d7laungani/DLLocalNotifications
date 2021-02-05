@@ -179,13 +179,13 @@ public class DLNotificationScheduler {
         return notification.identifier
     }
     
-    public func scheduleNotification ( notification: DLNotification) {
+    public func scheduleNotification (notification: DLNotification) {
         
         queueNotification(notification: notification)
         
     }
     
-    public func scheduleAllNotifications () {
+    public func scheduleAllNotifications(appBadge: Int) {
         
         let queue = DLQueue.queue.notificationsQueue()
         
@@ -194,7 +194,7 @@ public class DLNotificationScheduler {
             
             if count < min(DLNotificationScheduler.maximumScheduledNotifications, MAX_ALLOWED_NOTIFICATIONS) {
                 let popped = DLQueue.queue.pop()
-                scheduleNotificationInternal(notification: popped)
+                scheduleNotificationInternal(notification: popped, appBadge: appBadge)
                 count += 1
             } else { break }
             
@@ -202,7 +202,7 @@ public class DLNotificationScheduler {
     }
     
     // Refactored for backwards compatability
-    fileprivate func scheduleNotificationInternal ( notification: DLNotification) -> String? {
+    fileprivate func scheduleNotificationInternal(notification: DLNotification, appBadge: Int) -> String? {
         
         if notification.scheduled {
             return nil
@@ -253,6 +253,7 @@ public class DLNotificationScheduler {
             
             content.sound = notification.soundName == "" ? UNNotificationSound.default : UNNotificationSound.init(named: UNNotificationSoundName(rawValue: notification.soundName))
             
+            content.badge = (appBadge + 1) as? NSNumber
             
             if (notification.soundName == "1") { content.sound = nil}
             
