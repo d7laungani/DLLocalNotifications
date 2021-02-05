@@ -54,9 +54,13 @@ public class DLNotification {
     
     // Internal variable needed when changint Notification types
     var hasDataFromBefore = false
-    
+        
     // Holds date components for a repeating notification
     public var fromDateComponents: DateComponents?
+    
+    
+    //Specify the number 0 to remove the current badge, if present. Specify a number greater than 0 to display a badge with that number. Specify nil to leave the current badge unchanged.
+    public var appBadge: Int? = 0
     
     enum CodingKeys: String, CodingKey {
         case localNotificationRequest
@@ -74,6 +78,7 @@ public class DLNotification {
         case region
         case hasDataFromBefore
         case fromDateComponents
+        case appBadge
     }
     
     
@@ -88,7 +93,8 @@ public class DLNotification {
         }
     }
     
-    public init (identifier: String, alertTitle: String, alertBody: String, fromDateComponents: DateComponents, repeatInterval: RepeatingInterval ) {
+    
+    public init (identifier: String, alertTitle: String, alertBody: String, fromDateComponents: DateComponents, repeatInterval: RepeatingInterval, appBadge: Int? = nil) {
         
         self.alertBody = alertBody
         self.alertTitle = alertTitle
@@ -100,6 +106,7 @@ public class DLNotification {
         } else {
             self.repeats = true
         }
+        self.appBadge = appBadge
         
     }
     
@@ -144,6 +151,7 @@ public class DLNotification {
         self.launchImageName = try container.decodeIfPresent(String.self, forKey: .launchImageName)
         self.category = try container.decodeIfPresent(String.self, forKey: .category)
         self.hasDataFromBefore = try container.decode(Bool.self, forKey: .hasDataFromBefore)
+        self.appBadge = try container.decodeIfPresent(Int.self, forKey: .appBadge)
         //self.fromDateComponents = try container.decode(DateComponents.self, forKey: .fromDateComponents)
 
     }
@@ -163,6 +171,7 @@ public class DLNotification {
         try container.encode(launchImageName, forKey: .launchImageName)
         try container.encode(category, forKey: .category)
         try container.encode(hasDataFromBefore, forKey: .hasDataFromBefore)
+        try container.encodeIfPresent(appBadge, forKey: .appBadge)
         //try container.encode(fromDateComponents, forKey: .fromDateComponents)
 
     }
